@@ -1,464 +1,487 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Menu Header</title>
-
-<style>
-/* ===== BASE ===== */
-body{
-  margin:0;
-  font-family: Arial, sans-serif;
-  background:#f4f4f4;
-}
-select,button{
-  font-family:inherit;
-  font-size:12px;
-  size: 10px;
-  box-sizing:border-box;
-}
-input[type="number"]{
-  font-family:inherit;
-  font-size:12px;
-  width: 80px;
-  box-sizing:border-box;
-  border: 1px solid #b00020;
-  border-radius: 5px;
-}
-
-table{
-  width:100%;
-  border-collapse:collapse;
-  background:#fff;
-}
-
-th,td{
-  border:1px solid #ddd;
-  padding:12px;
-  vertical-align:middle;
-}
-
-/* ===== HEADER ===== */
-header{
-  text-align:center;
-}
-
-#headerName{ margin:0; font-size:22px; }
-#headerAddress,
-#headerPhone,
-#headerDealsIn{
-  margin:4px 0;
-  font-size:14px;
-}
-
-/* ===== IMAGES ===== */
-.thumbnail{
-  width:140px;
-  height:140px;
-  margin:auto;
-  background:#f9f9f9;
-  border-radius:8px;
-  overflow:hidden;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  position:relative;
-}
-
-.thumbnail img{
-  width:100%;
-  height:100%;
-  object-fit:cover;
-}
-
-.thumb-overlay{
-  position:absolute;
-  top:6px;
-  right:6px;
-  background:rgba(0,0,0,0.6);
-  color:#fff;
-  padding:4px 6px;
-  border-radius:4px;
-  font-size:12px;
-  cursor:pointer;
-  display:none;
-}
-
-.thumbnail.has-image:hover .thumb-overlay{
-  display:block;
-}
-
-/* ===== UPLOAD ===== */
-input[type="file"]{ display:none; }
-
-.custom-file-upload{
-  margin-top:8px;
-  display:inline-block;
-  padding:8px 14px;
-  background:#007bff;
-  color:#fff;
-  border-radius:5px;
-  cursor:pointer;
-  font-weight:600;
-}
-
-.custom-file-upload:hover{
-  background:#0056b3;
-}
-
-#selectedFiles{
-  margin-top:6px;
-  font-size:13px;
-  color:#555;
-}
-
-/* ===== CONTROLS ===== */
-#controls{
-  text-align:center;
-  padding:12px;
-}
-
-select,button{
-  padding:6px 10px;
-  border-radius:4px;
-  border:1px solid #ccc;
-}
-
-button{
-  background:#28a745;
-  color:#fff;
-  border:none;
-  cursor:pointer;
-}
-
-button:hover{
-  background:#218838;
-}
-
-/* ===== PRINT ===== */
-@media print{
-  button,.custom-file-upload,select{ display:none!important; }
-  body{ background:#fff; }
-}
-</style>
-<!-- html2canvas and jsPDF (CDN) -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-</head>
-
-<body>
-<div id="exportArea" class="export-area">
-    <div class="table-responsive">
-      <table id="itemTable" role="table" aria-label="Inventory">
-       <!-- LEFT IMAGE -->
-       <td style="width:160px;text-align:center;">
-        <div class="thumbnail">
-        <img src="chef.jpg" alt="Chef">
-    </div>
-      </td>
-
-  <!-- HEADER -->
-      <th colspan="2">
-     <header>
-      <h3 id="headerName">STARTER FACTORY</h3>
-      <p id="headerAddress">Old Berhampur, Radhakanta Street, Berhampur</p>
-      <p id="headerPhone">📞 9938618356 | 9658216341</p>
-      <p id="headerDealsIn">Deals in: Starters, Chinese, Tandoori, South Indian, Pendir</p>
-      <h2><u id="menuTitle">Menu</u></h2>
-    </header>
-  </th>
-
-  <!-- RIGHT IMAGE UPLOAD -->
-  <td style="width:180px;text-align:center;">
-    <input type="file" id="imageUpload" accept="image/*">
-    <div id="imagePreview" class="thumbnail">
-      <span class="thumb-overlay" id="resetImg">Reset</span>
-    </div>
-    <label for="imageUpload" class="custom-file-upload">Upload Image</label>
-    <div id="selectedFiles">No image</div>
-  </td>
-</tr>
-<tr>
-  <th>Item Name</th>
-  <th>Quantity</th>
-  <th>Item</th>
-  <th>Quantity</th>
-</tr>
-<tbody>
-        <tr>
-          <th colspan="2"><strong>Masala</strong></th>
-          <th colspan="2"><strong>Sauce</strong></th>
-        </tr>
-          <!-- existing items converted to rows -->
-          <tr>
-            <td>Tomato Ketchup</td>
-            <td class="row-actions"><input type="number" min="0" placeholder="Quantity" style="font-size:12px;"><button onclick="removeRow(this)" class="btn ghost1"><span style='font-size:8px;'>&#935;</span></button></td>
-            <td>Tomato Ketchup</td>
-            <td class="row-actions"><input type="number" min="0" placeholder="Quantity" style="font-size:15px;"><button onclick="removeRow(this)" class="btn ghost2"><span style='font-size:8px;'>&#935;</span></button></td>
-          </tr>
-           <tr>
-          <th></th>
-          <th colspan="2" style="text-align:center;font-size:0.9rem;color:#555;"><strong>Thank You for Visiting.</strong></th>
-          <th></th>
-       </tr>
-       <tr>
-          <th colspan="2"></th>
-          <th colspan="2"><strong>Made By <sub>www.NoteMenu.com</sub></strong></th>
-          
-       </tr>
-          <!-- keep the rest simple: user can add new rows -->
-        </tbody>
-</table>
-</div></div>  
-
-<div class="wrap">
-  <table>
-  <h2>Inventory Table</h2>
-
-  <div class="controls" aria-hidden="false">
-    <tr>
-      <th>
-        <select id="categorySelect">
-          <option value="">Select Category</option>
-          <option value="Masala">Masala</option>
-          <option value="Sauce">Sauce</option>
-        </select>
-        <input id="newItemName" type="text" placeholder="Enter Item name" aria-describedby="nameError" inputmode="text" autocomplete="off">
-        <input id="newItemQty" type="number" placeholder="Quantity" place-holder="Quantity" min="0">
-        <div id="nameError" style="color:#b00020;font-size:0.9rem;display:none;margin-left:8px" role="alert" aria-live="polite"></div>
-      </th>
-      <th>
-        <button class="btn" id="addBtn">Add item</button>
-        <button class="btn ghost1" id="clearBtn">Clear inputs</button>
-        <div id="nameError" style="color:#b00020;font-size:0.9rem;display:none;margin-left:8px" role="alert" aria-live="polite"></div>
-      </th>
-   <th>
-      <div style="margin-left:auto;display:flex;gap:8px">
-      <button class="btn" id="exportPng">Export PNG</button>
-      <button class="btn" id="exportPdf">Export PDF</button>
-      <button class="btn ghost" id="saveTxt">Save TXT</button>
-  </th>
-       </tr>
-    </div>
-  </div>
-</table>
-<!-- CONTROLS -->
-<div id="controls">
-  <button onclick="window.print()">Print Menu</button>
-  &nbsp;
-  <select id="langSelect">
-    <option value="en">English</option>
-    <option value="hi">हिन्दी</option>
-    <option value="or">ଓଡ଼ିଆ</option>
-  </select>
-</div>
-<script>
-/* ===== IMAGE UPLOAD ===== */
-const upload=document.getElementById("imageUpload");
-const preview=document.getElementById("imagePreview");
-const reset=document.getElementById("resetImg");
-const filesText=document.getElementById("selectedFiles");
-
-upload.addEventListener("change",()=>{
-  const file=upload.files[0];
-  if(!file) return;
-  const reader=new FileReader();
-  reader.onload=e=>{
-    preview.innerHTML='<img src="'+e.target.result+'">';
-    preview.classList.add("has-image");
-    preview.appendChild(reset);
-    filesText.textContent=file.name;
-  };
-  reader.readAsDataURL(file);
-});
-
-reset.onclick=()=>{
-  preview.innerHTML="";
-  preview.classList.remove("has-image");
-  preview.appendChild(reset);
-  upload.value="";
-  filesText.textContent="No image";
-};
- // Helpers
-  const tbody = document.querySelector('#itemTable tbody');
-  const addBtn = document.getElementById('addBtn');
-  const clearBtn = document.getElementById('clearBtn');
-  const exportPng = document.getElementById('exportPng');
-  const exportPdf = document.getElementById('exportPdf');
-  const saveTxt = document.getElementById('saveTxt');
-
-  addBtn.addEventListener('click', ()=>{
-    const category = document.getElementById('categorySelect').value;
-    const name = document.getElementById('newItemName').value.trim();
-    const qty = document.getElementById('newItemQty').value;
-    if(!category){alert('Select a category'); return;}
-    if(!name){alert('Enter an item name'); return;}
-    
-    // Find the category row
-    const categoryRow = findCategoryRow(category);
-    if (!categoryRow) {
-      alert('Category not found');
-      return;
+  <meta charset="UTF-8" />
+  <title>Chef Menu – Smart Menu & Workforce Management</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
     }
-    
-    // Add item row after category row, in the appropriate columns
-    const itemRow = document.createElement('tr');
-    if (category === 'Masala') {
-      itemRow.innerHTML = `<td>${escapeHtml(name)}</td><td class="row-actions"><input type="number" value="${Number(qty)||0}" min="0"><button onclick="removeRow(this)" class="btn ghost">Remove</button></td>`;
-    } else if (category === 'Sauce') {
-      itemRow.innerHTML = `<td></td><td></td><td>${escapeHtml(name)}</td><td class="row-actions"><input type="number" value="${Number(qty)||0}" min="0"><button onclick="removeRow(this)" class="btn ghost">Remove</button></td>`;
-    }
-    categoryRow.insertAdjacentElement('afterend', itemRow);
-    
-    document.getElementById('categorySelect').value = '';
-    document.getElementById('newItemName').value = '';
-    document.getElementById('newItemQty').value = 0;
-  });
 
-  function findCategoryRow(category) {
-    const rows = document.querySelectorAll('#itemTable tr');
-    for (let row of rows) {
-      const ths = row.querySelectorAll('th');
-      for (let th of ths) {
-        if (th.innerText.trim() === category) {
-          return row;
-        }
+    body {
+      background: #f4f5f7;
+      color: #222;
+      line-height: 1.6;
+    }
+
+    header {
+      background: #111827;
+      color: #fff;
+      padding: 16px 10%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    header .logo {
+      font-size: 1.3rem;
+      font-weight: bold;
+      letter-spacing: 1px;
+    }
+
+    header nav a {
+      color: #e5e7eb;
+      margin-left: 18px;
+      text-decoration: none;
+      font-size: 0.95rem;
+    }
+
+    header nav a:hover {
+      color: #fbbf24;
+    }
+
+    .btn-primary {
+      background: #f97316;
+      border: none;
+      padding: 10px 18px;
+      border-radius: 4px;
+      color: #fff;
+      font-size: 0.95rem;
+      cursor: pointer;
+    }
+
+    .btn-primary:hover {
+      background: #ea580c;
+    }
+
+    .hero {
+      padding: 60px 10%;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      background: linear-gradient(135deg, #111827 0%, #1f2937 60%, #f97316 140%);
+      color: #fff;
+    }
+
+    .hero-text {
+      max-width: 520px;
+    }
+
+    .hero-text h1 {
+      font-size: 2.4rem;
+      margin-bottom: 12px;
+    }
+
+    .hero-text p {
+      margin-bottom: 18px;
+      font-size: 1rem;
+      color: #e5e7eb;
+    }
+
+    .hero-highlight {
+      color: #fbbf24;
+      font-weight: bold;
+    }
+
+    .hero-steps {
+      margin-top: 12px;
+      font-size: 0.95rem;
+    }
+
+    .hero-steps li {
+      margin-bottom: 4px;
+    }
+
+    .hero-card {
+      background: #111827;
+      border-radius: 12px;
+      padding: 20px;
+      width: 320px;
+      box-shadow: 0 14px 30px rgba(0, 0, 0, 0.4);
+    }
+
+    .hero-card h3 {
+      margin-bottom: 10px;
+      font-size: 1.1rem;
+    }
+
+    .hero-card p {
+      font-size: 0.9rem;
+      color: #d1d5db;
+      margin-bottom: 10px;
+    }
+
+    .hero-badge {
+      display: inline-block;
+      font-size: 0.8rem;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: #f97316;
+      color: #111827;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+
+    section {
+      padding: 50px 10%;
+    }
+
+    .section-title {
+      font-size: 1.8rem;
+      margin-bottom: 6px;
+      text-align: center;
+    }
+
+    .section-subtitle {
+      text-align: center;
+      font-size: 0.98rem;
+      color: #6b7280;
+      margin-bottom: 30px;
+    }
+
+    .features {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 20px;
+    }
+
+    .feature-card {
+      background: #ffffff;
+      border-radius: 10px;
+      padding: 18px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+    }
+
+    .feature-card h3 {
+      margin-bottom: 6px;
+      font-size: 1.05rem;
+    }
+
+    .feature-card p {
+      font-size: 0.9rem;
+      color: #4b5563;
+    }
+
+    .feature-tag {
+      display: inline-block;
+      font-size: 0.75rem;
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: #e5e7eb;
+      color: #374151;
+      margin-bottom: 8px;
+    }
+
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      gap: 18px;
+      margin-top: 10px;
+    }
+
+    .step-card {
+      background: #ffffff;
+      border-radius: 10px;
+      padding: 16px;
+      border-left: 4px solid #f97316;
+    }
+
+    .step-number {
+      font-weight: bold;
+      color: #f97316;
+      margin-bottom: 4px;
+      font-size: 0.9rem;
+    }
+
+    .step-card h4 {
+      margin-bottom: 4px;
+      font-size: 1rem;
+    }
+
+    .step-card p {
+      font-size: 0.9rem;
+      color: #4b5563;
+    }
+
+    .export-box {
+      background: #111827;
+      color: #f9fafb;
+      border-radius: 10px;
+      padding: 18px;
+      margin-top: 18px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .export-box span.format {
+      display: inline-block;
+      margin-right: 10px;
+      padding: 6px 12px;
+      border-radius: 999px;
+      border: 1px solid #f97316;
+      font-size: 0.85rem;
+    }
+
+    .cta {
+      text-align: center;
+      background: #f97316;
+      color: #111827;
+      border-radius: 10px;
+      padding: 26px 20px;
+      margin-top: 30px;
+    }
+
+    .cta p {
+      margin-bottom: 10px;
+    }
+
+    .cta button {
+      background: #111827;
+      color: #f9fafb;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.95rem;
+    }
+
+    .cta button:hover {
+      background: #020617;
+    }
+
+    footer {
+      padding: 20px 10%;
+      background: #111827;
+      color: #9ca3af;
+      font-size: 0.85rem;
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    footer a {
+      color: #f97316;
+      text-decoration: none;
+    }
+
+    @media (max-width: 768px) {
+      .hero {
+        padding-top: 40px;
+      }
+
+      .hero-text h1 {
+        font-size: 2rem;
+      }
+
+      header {
+        flex-wrap: wrap;
+        gap: 8px;
       }
     }
-    return null;
-  }
+  </style>
+</head>
+<body>
 
-  clearBtn.addEventListener('click', ()=>{document.getElementById('categorySelect').value='';document.getElementById('newItemName').value='';document.getElementById('newItemQty').value=0});
+  <header>
+    <div class="logo">Chef Menu</div>
+    <nav>
+      <a href="#features">Features</a>
+      <a href="#workflow">How it works</a>
+      <a href="#history">History</a>
+      <a href="menu.html" class="btn-primary">View Menu</a>
+    </nav>
+  </header>
 
-  function removeRow(btn){
-    const td = btn.closest('td');
-    const tr = td.closest('tr');
-    const cells = tr.cells;
-    if (cells.length < 4) return; // Skip if not a standard row
-    const index = Array.from(cells).indexOf(td);
-    if (index === 1) { // First quantity column
-      cells[0].innerHTML = '';
-      cells[1].innerHTML = '';
-    } else if (index === 3) { // Second quantity column
-      cells[2].innerHTML = '';
-      cells[3].innerHTML = '';
-    }
-    // If both sides are empty, remove the row
-    if (!cells[0].innerHTML.trim() && !cells[1].innerHTML.trim() && !cells[2].innerHTML.trim() && !cells[3].innerHTML.trim()) {
-      tr.remove();
-    }
-  }
+  <section class="hero">
+    <div class="hero-text">
+      <h1>Digitalize your kitchen with <span class="hero-highlight">Chef Menu</span></h1>
+      <p>
+        A smart menu and workforce management portal for chefs to manage item lists, menu lists,
+        ingredients, export files, and track their work history in one place.
+      </p>
+      <button class="btn-primary">Get Started – Chef Login</button>
+      <ul class="hero-steps">
+        <li>Login to the Chef Menu portal</li>
+        <li>Enter your menu item list</li>
+        <li>Add ingredients with quantities</li>
+        <li>Export as PNG or PDF</li>
+        <li>Track your work history anytime</li>
+      </ul>
+    </div>
 
-  function escapeHtml(text){
-    return text.replace(/[&<>"']/g, (c)=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
-  }
-  // Sanitize and validation helpers for item names
-  function sanitizeName(s){
-    return (s||'').replace(/[^A-Za-z0-9\s\-\$\$\.,'"&\/]/g,'').trim();
-  }
-  function isValidName(s){
-    return /^[A-Za-z0-9\s\-\$\$\.,'"&\/]+$/.test(s||'');
-  }
-  function showError(msg){ const el = document.getElementById('nameError'); if(el){ el.textContent = msg; el.style.display = 'block'; }}
-  function clearError(){ const el = document.getElementById('nameError'); if(el){ el.textContent = ''; el.style.display = 'none'; }}
-  function showTempMessage(msg){ const el = document.getElementById('nameError'); if(el){ el.textContent = msg; el.style.display = 'block'; setTimeout(()=>clearError(),2000); }}
+    <div class="hero-card">
+      <div class="hero-badge">For professional kitchens</div>
+      <h3>All your recipes and menus, organized.</h3>
+      <p>
+        Chef Menu helps you keep your item and menu list digital, accurate, and ready to share
+        with your team or management in just a few clicks.
+      </p>
+      <p>
+        Export beautiful, readable menu and item sheets as PNG or PDF and keep a complete
+        history of your changes and workflow.
+      </p>
+    </div>
+  </section>
 
-  const nameInputEl = document.getElementById('newItemName');
-  nameInputEl.addEventListener('input', (e)=>{
-    const before = e.target.value;
-    const sanitized = sanitizeName(before);
-    if(before !== sanitized){ e.target.value = sanitized; showTempMessage('Removed invalid characters'); }
-  });
+  <section id="features">
+    <h2 class="section-title">Core features</h2>
+    <p class="section-subtitle">
+      Everything a chef needs to manage menu, ingredients, exports, and work history.
+    </p>
 
-  nameInputEl.addEventListener('keydown', (e)=>{ if(e.key === 'Enter'){ addBtn.click(); }});
+    <div class="features">
+      <div class="feature-card">
+        <span class="feature-tag">Menu management</span>
+        <h3>Digital menu item list</h3>
+        <p>
+          Create, organize, and update your full menu item list in a digitalized way.
+          Add categories, customize item names, and quickly search for any dish.
+        </p>
+      </div>
 
-  // Save TXT (original behavior, robust)
-  saveTxt.addEventListener('click', ()=>{
-    const rows = Array.from(tbody.querySelectorAll('tr'));
-    const lines = rows.map(r=>{
-      const name = r.cells[0]?.innerText?.trim() || '';
-      const input = r.querySelector('input[type="number"]');
-      const qty = input ? input.value : '';
-      return name ? `${name}: ${qty}` : null;
-    }).filter(Boolean);
-    const blob = new Blob([lines.join('\n')], {type: 'text/plain'});
-    const link = document.createElement('a');
-    link.href = URL.createObjectURL(blob);
-    link.download = 'inventory.txt';
-    link.click();
-  });
+      <div class="feature-card">
+        <span class="feature-tag">Ingredients</span>
+        <h3>Ingredient and quantity tracking</h3>
+        <p>
+          For every menu item, list required ingredients and exact quantities. This helps
+          you with preparation planning, purchase decisions, and kitchen consistency.
+        </p>
+      </div>
 
-  // Export PNG
-  exportPng.addEventListener('click', ()=>{
-    const area = document.getElementById('exportArea');
-    html2canvas(area, {scale:2}).then(canvas=>{
-      const url = canvas.toDataURL('image/png');
-      const a = document.createElement('a');
-      a.href = url; a.download = 'menu.png'; a.click();
-    }).catch(err=>alert('Export failed: '+err));
-  });
+      <div class="feature-card">
+        <span class="feature-tag">Export</span>
+        <h3>Export as PNG or PDF</h3>
+        <p>
+          Turn your menu and item lists into shareable PNG or PDF files instantly.
+          Use them for kitchen boards, staff training, or management review.
+        </p>
+      </div>
 
-  // Export PDF using jsPDF
-  exportPdf.addEventListener('click', async ()=>{
-    const area = document.getElementById('exportArea');
-    try{
-      const canvas = await html2canvas(area, {scale:2});
-      const imgData = canvas.toDataURL('image/png');
-      const { jsPDF } = window.jspdf;
-      const pdf = new jsPDF({ orientation: 'portrait', unit: 'pt', format: 'a4' });
-      const pageWidth = pdf.internal.pageSize.getWidth();
-      const pageHeight = pdf.internal.pageSize.getHeight();
+      <div class="feature-card">
+        <span class="feature-tag">Workforce</span>
+        <h3>Workforce and history management</h3>
+        <p>
+          Manage your own work history. See what you cooked, when you updated the menu,
+          and how your kitchen has evolved over time.
+        </p>
+      </div>
+    </div>
+  </section>
 
-      // calculate image dimensions to fit A4 while keeping ratio
-      const imgWidth = pageWidth - 40; // margin
-      const imgHeight = (canvas.height * imgWidth) / canvas.width;
-      let y = 20;
-      pdf.addImage(imgData, 'PNG', 20, y, imgWidth, imgHeight);
-      pdf.save('menu.pdf');
-    }catch(e){alert('PDF export failed: '+e)}
-  });
+  <section id="workflow">
+    <h2 class="section-title">Simple workflow for busy chefs</h2>
+    <p class="section-subtitle">
+      Chef Menu is designed to match the way you actually work in the kitchen.
+    </p>
 
-  // Improve keyboard accessibility: Enter to add
-  document.getElementById('newItemName').addEventListener('keydown', (e)=>{if(e.key==='Enter'){addBtn.click()}});
+    <div class="steps">
+      <div class="step-card">
+        <div class="step-number">Step 1</div>
+        <h4>Login to the Chef Menu portal</h4>
+        <p>
+          Securely sign in with your chef account to access your personal menu and history.
+        </p>
+      </div>
 
-  // initial accessibility: ensure focusable buttons
-  document.querySelectorAll('button').forEach(b=>b.setAttribute('tabindex','0'));
+      <div class="step-card">
+        <div class="step-number">Step 2</div>
+        <h4>Enter menu item list</h4>
+        <p>
+          Add all the dishes you serve: starters, mains, desserts, and more. Update them anytime.
+        </p>
+      </div>
 
+      <div class="step-card">
+        <div class="step-number">Step 3</div>
+        <h4>Add ingredients and quantities</h4>
+        <p>
+          For each dish, list every required ingredient and its quantity to keep recipes consistent.
+        </p>
+      </div>
 
-/* ===== LANGUAGE ===== */
-const T={
-  en:{
-    name:"STARTER FACTORY",
-    address:"Old Berhampur, Radhakanta Street, Berhampur",
-    phone:"📞 9938618356 | 9658216341",
-    deals:"Deals in: Starters, Chinese, Tandoori, South Indian, Pendir",
-    menu:"Menu"
-  },
-  hi:{
-    name:"स्टार्टर फैक्टरी",
-    address:"ओल्ड बहरामपुर, राधाकान्ता स्ट्रीट, बहरामपुर",
-    phone:"📞 9938618356 | 9658216341",
-    deals:"स्टार्टर, चाइनीज़, तंदूरी, साउथ इंडियन",
-    menu:"मेनू"
-  },
-  or:{
-    name:"STARTER FACTORY",
-    address:"Old Berhampur, Radhakanta Street, Berhampur",
-    phone:"📞 9938618356 | 9658216341",
-    deals:"Starters, Chinese, Tandoori, South Indian",
-    menu:"ମେନୁ"
-  }
-};
+      <div class="step-card">
+        <div class="step-number">Step 4</div>
+        <h4>Export as PNG or PDF</h4>
+        <p>
+          Generate clean PNG or PDF files for printing, sharing, or viewing on screens in the kitchen.
+        </p>
+      </div>
+    </div>
 
-document.getElementById("langSelect").addEventListener("change",e=>{
-  const L=T[e.target.value];
-  headerName.textContent=L.name;
-  headerAddress.textContent=L.address;
-  headerPhone.textContent=L.phone;
-  headerDealsIn.textContent=L.deals;
-  menuTitle.textContent=L.menu;
-});
-</script>
+    <div class="export-box">
+      <div>
+        <h3>Beautiful export formats</h3>
+        <p>
+          Share your menu, recipe sheets, or item list with staff or management in professional formats.
+        </p>
+      </div>
+      <div>
+        <span class="format">PNG Export</span>
+        <span class="format">PDF Export</span>
+      </div>
+    </div>
+  </section>
+
+  <section id="history">
+    <h2 class="section-title">Work history that works for you</h2>
+    <p class="section-subtitle">
+      History helps the chef manage their own work: past menus, changes, and daily activity.
+    </p>
+
+    <div class="features">
+      <div class="feature-card">
+        <span class="feature-tag">Timeline</span>
+        <h3>Menu change tracking</h3>
+        <p>
+          See which dishes you added, removed, or updated over time. Perfect for planning seasons, festivals,
+          and special events.
+        </p>
+      </div>
+
+      <div class="feature-card">
+        <span class="feature-tag">Productivity</span>
+        <h3>Daily work overview</h3>
+        <p>
+          Track what you worked on each day – menu updates, new ingredients, and exported files –
+          so you always know your own contributions.
+        </p>
+      </div>
+
+      <div class="feature-card">
+        <span class="feature-tag">Reporting</span>
+        <h3>Export history insights</h3>
+        <p>
+          Keep a record of every PNG or PDF export to understand how often menus are shared and updated.
+        </p>
+      </div>
+    </div>
+
+    <div class="cta">
+      <p>Ready to digitalize your kitchen and own your work history?</p>
+      <button>Login to Chef Menu</button>
+    </div>
+  </section>
+
+  <footer>
+    © <span id="year"></span> Chef Menu. All rights reserved.
+    · Built for chefs who want control over their menu, ingredients, and work history.
+    · <a href="#features">Explore features</a>
+  </footer>
+
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
 
 </body>
 </html>
