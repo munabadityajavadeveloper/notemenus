@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Pro Kitchen Inventory Manager</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --sidebar-width: 320px;
+            --primary: #2563eb;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --dark: #0f172a;
+            --bg: #f1f5f9;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-font-smoothing: antialiased; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            background-color: #334155;
+            display: flex;
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+        }
+
+        /* ===== SIDEBAR ===== */
+        #sidebar {
+            width: var(--sidebar-width);
+            background: var(--dark);
+            color: white;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+            z-index: 2000;
+            transition: transform 0.3s ease;
+            border-right: 1px solid #334155;
+        }
+
+        .sidebar-header {
+            padding: 20px;
+            background: #1e293b;
+            text-align: center;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        #controls { padding: 15px; overflow-y: auto; flex: 1; }
+
+        .card {
+            background: rgba(255,255,255,0.05);
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        h4 { font-size: 10px; color: #94a3b8; text-transform: uppercase; margin-bottom: 8px; letter-spacing: 1px; }
+
+        input, select {
+            width: 100%; padding: 10px; margin-bottom: 10px;
+            background: #0f172a; border: 1px solid #334155;
+            color: white; border-radius: 6px; font-size: 13px;
+            outline: none;
+        }
+        input:focus { border-color: var(--primary); }
+
+        .btn {
+            width: 100%; padding: 10px; border: none; border-radius: 6px;
+            font-weight: bold; cursor: pointer; margin-bottom: 5px; color: white;
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+            font-size: 13px;
+        }
+
+        /* ===== MAIN CONTENT ===== */
+        .main-content {
+            flex: 1;
+            position: relative;
+            overflow: auto;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 40px 20px;
+        }
+
+        #menuBtn {
+            display: none; position: fixed; top: 15px; left: 15px;
+            width: 50px; height: 50px; border-radius: 8px;
+            background: var(--dark); color: white; z-index: 2001; border: none;
+        }
+
+        /* ===== TABLE AREA ===== */
+        #tableScaler { transform-origin: top center; transition: transform 0.2s; }
+
+        #captureArea {
+            background: white; padding: 30px;
+            width: 850px; min-height: 1100px;
+            box-shadow: 0 0 40px rgba(0,0,0,0.1);
+        }
+
+        table { width: 100%; border-collapse: collapse; border: 2.5px solid #000; table-layout: fixed; }
+        th, td { border: 1px solid #000; padding: 4px 8px; vertical-align: middle; position: relative; height: 32px; font-size: 12px; }
+        
+        .red-header { color: #b91c1c; font-size: 32px; font-weight: 800; text-align: center; line-height: 1; }
+        .black-bar { background: #000; color: #fff; text-align: center; font-size: 10px; font-weight: 800; }
+        
+        .cat-label { 
+            background: #cbd5e1; font-weight: 800; font-size: 11px; 
+            color: #000; letter-spacing: 0.5px; position: relative;
+        }
+
+        .del-cat-btn {
+            position: absolute; right: 5px; top: 50%; transform: translateY(-50%);
+            background: var(--danger); color: white; border: none; font-size: 8px;
+            padding: 2px 5px; border-radius: 3px; cursor: pointer; visibility: hidden;
+        }
+        .cat-label:hover .del-cat-btn { visibility: visible; }
+
+        .del-btn { 
+            color: var(--danger); cursor: pointer; position: absolute; right: 2px; 
+            visibility: hidden; background: #fff; padding: 0px 4px; 
+            font-size: 10px; border-radius: 3px; border: 1px solid #ddd;
+        }
+        td:hover .del-btn { visibility: visible; }
+
+        .img-slot { width: 50px; height: 50px; border: 1px dashed #ccc; margin: auto; display: flex; align-items: center; justify-content: center; overflow: hidden; background: #f8fafc; }
+        .img-slot img { width: 100%; height: 100%; object-fit: cover; }
+
+        .unit-tag { font-size: 9px; background: #f1f5f9; padding: 2px 4px; border-radius: 3px; color: #64748b; font-weight: bold; margin-left: 5px; }
+
+        @media (max-width: 1024px) {
+            #menuBtn { display: block; }
+            #sidebar { position: fixed; left: 0; transform: translateX(-100%); }
+            #sidebar.open { transform: translateX(0); }
+        }
+    </style>
+</head>
+<body>
+    
+
+    <button id="menuBtn" onclick="toggleMenu()">☰</button>
+
+    <div id="sidebar">
+        <div class="sidebar-header">KITCHEN PRO</h3></div>
+        <div id="controls">
+
+            <div class="card" style="border: 1px solid var(--warning);">
+                <h4>0. Add New Category</h4>
+                <input type="text" id="newCatName" placeholder="Category Name (e.g. Fruits)">
+                <select id="newCatSide">
+                    <option value="L">Left Side</option>
+                    <option value="R">Right Side</option>
+                </select>
+                <button class="btn" style="background: var(--warning); color: #000;" onclick="addNewCategory()">+ Create Category</button>
+            </div>
+            
+            <div class="card" style="border: 1px solid var(--primary);">
+                <h4>1. Entry Selector</h4>
+                <select id="targetCat" onchange="populateItemList()"></select>
+                <button class="btn" style="background: var(--danger); font-size: 10px;" onclick="deleteCategoryFromUI()">🗑️ Delete Selected Category</button>
+                
+                <select id="itemDropdown" onchange="syncItemName()">
+                    <option value="">-- Choose Item --</option>
+                </select>
+                <input type="text" id="itemName" placeholder="Confirm/Edit Item Name">
+            </div>
+
+            <div class="card" style="border: 1px solid var(--success);">
+                <h4>2. Quantity & Unit</h4>
+                <input type="text" id="itemQty" placeholder="Value (e.g. 50)">
+                <select id="unitType">
+                    <option value="Kg">Kilogram (Kg)</option>
+                    <option value="Gram">Gram (gm)</option>
+                    <option value="Price">$ (Price)</option>
+                    <option value="Pic">Piece/Icon</option>
+                </select>
+                <button class="btn" style="background: var(--success);" onclick="addItemFromUI()">Update Table</button>
+            </div>
+
+            <div class="card">
+                <h4>3. Settings</h4>
+                <button class="btn" style="background: #6366f1;" onclick="exportPng()">💾 Save PNG</button>
+                <button class="btn" style="background: var(--danger);" onclick="window.print()">🖨️ Print PDF</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div id="tableScaler">
+            <div id="captureArea">
+                <table>
+                    <thead>
+                        <tr>
+                            <td style="width:18%; text-align:center;">
+                                <div class="img-slot" id="logoSlot">LOGO</div>
+                                <input type="file" id="logoInp" hidden onchange="previewImg(event, 'logoSlot')">
+                                <button onclick="document.getElementById('logoInp').click()" style="font-size:8px; border:none; background:none; color:var(--primary); cursor:pointer;">UPLOAD</button>
+                            </td>
+                            <th colspan="2">
+                                <div class="red-header" contenteditable="true" style="background-image: url('headimg.jpg');" width="50px">STARTER FACTORY</div>
+                                <p id="headerAddress">Old Berhampur, Radhakanta Street, Berhampur</p>
+                                <p id="headerPhone">📞 9938618356 | 9658216341</p>
+                                <p id="headerDealsIn">Deals in: Starters, Chinese, Tandoori, South Indian, Pendir</p>
+                                <h2><u id="menuTitle">Menu</u></h2>
+                        
+                                <div style="text-align:center; font-size:11px; color:#64748b; margin-top:5px; font-weight:500;">DAILY STOCK CHECKLIST</div>
+                            </th>
+                            <td style="width:18%; text-align:center;">
+                                <div class="img-slot" id="itemSlot">PHOTO</div>
+                                <input type="file" id="itemInp" hidden onchange="previewImg(event, 'itemSlot')">
+                                <button onclick="document.getElementById('itemInp').click()" style="font-size:8px; border:none; background:none; color:var(--primary); cursor:pointer;">UPLOAD</button>
+                            </td>
+                        </tr>
+                        <tr class="black-bar">
+                            <td style="width:35%">DESCRIPTION</td><td style="width:15%">QTY/UNIT</td>
+                            <td style="width:35%">DESCRIPTION</td><td style="width:15%">QTY/UNIT</td>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody"></tbody>
+                    <tr>
+                        <td colspan="4" style="text-align:center; font-size:10px; color:#64748b; padding:10px 0;">
+                           <strong><h4>Made by www.notemenus.in</h4></strong>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+    <script>
+        // MASTER DATA STATE
+        let categories = [
+            { name: "Masala Powders", side: "L", items: [
+                {n: "Turmeric", q: "", u: ""}, {n: "Cumin", q: "", u: ""}, {n: "Coriander", q: "", u: ""},
+                {n: "Red Chili", q: "", u: ""}, {n: "Black Pepper", q: "", u: ""}, {n: "Garam Masala", q: "", u: ""}
+            ]},
+            { name: "Non-Veg", side: "R", items: [
+                {n: "Chicken Breast", q: "", u: ""}, {n: "Lamb Chops", q: "", u: ""}, {n: "Salmon Fillet", q: "", u: ""}
+            ]}
+        ];
+
+        function renderTable() {
+            const tbody = document.getElementById('tableBody');
+            tbody.innerHTML = "";
+            let LRows = [], RRows = [];
+
+            categories.filter(c => c.side === 'L').forEach(cat => {
+                LRows.push({ isH: true, t: cat.name });
+                cat.items.forEach(i => LRows.push({ isH: false, t: i.n, q: i.q, u: i.u, c: cat.name }));
+            });
+            categories.filter(c => c.side === 'R').forEach(cat => {
+                RRows.push({ isH: true, t: cat.name });
+                cat.items.forEach(i => RRows.push({ isH: false, t: i.n, q: i.q, u: i.u, c: cat.name }));
+            });
+
+            const max = Math.max(LRows.length, RRows.length, 25);
+            for (let i = 0; i < max; i++) {
+                const tr = document.createElement('tr');
+                tr.appendChild(createCell(LRows[i]));
+                tr.appendChild(createQtyCell(LRows[i]));
+                tr.appendChild(createCell(RRows[i]));
+                tr.appendChild(createQtyCell(RRows[i]));
+                tbody.appendChild(tr);
+            }
+            updateCategoryDropdown();
+            autoScale();
+        }
+
+        function createCell(data) {
+            const td = document.createElement('td');
+            if (!data) return td;
+            if (data.isH) {
+                td.className = "cat-label";
+                td.innerHTML = `📦 ${data.t.toUpperCase()} <button class="del-cat-btn" onclick="confirmDeleteCategory('${data.t}')">DEL</button>`;
+            } else {
+                td.innerHTML = `<span contenteditable="true">${data.t}</span>`;
+            }
+            return td;
+        }
+
+        function createQtyCell(data) {
+            const td = document.createElement('td');
+            if (!data) return td;
+            if (data.isH) {
+                td.className = "cat-label";
+                td.style.textAlign = "center";
+                td.innerText = "--";
+            } else {
+                const unitSymbol = data.u === 'Price' ? '$' : (data.u || "");
+                td.innerHTML = `<span contenteditable="true">${data.q}</span> <span class="unit-tag">${unitSymbol}</span>
+                    <span class="del-btn" onclick="deleteItem('${data.c}', '${data.t}')">✕</span>`;
+            }
+            return td;
+        }
+
+        // Logic for Adding Category
+        function addNewCategory() {
+            const name = document.getElementById('newCatName').value.trim();
+            const side = document.getElementById('newCatSide').value;
+
+            if (!name) return alert("Please enter a category name");
+            if (categories.some(c => c.name.toLowerCase() === name.toLowerCase())) {
+                return alert("Category already exists!");
+            }
+
+            categories.push({ name: name, side: side, items: [] });
+            document.getElementById('newCatName').value = ""; // Clear input
+            renderTable();
+        }
+
+        // Logic for Category Deletion
+        function confirmDeleteCategory(catName) {
+            if (confirm(`Delete category "${catName}" and all its items?`)) {
+                categories = categories.filter(c => c.name !== catName);
+                renderTable();
+            }
+        }
+
+        function deleteCategoryFromUI() {
+            const catName = document.getElementById('targetCat').value;
+            if (!catName) return alert("Select a category first.");
+            confirmDeleteCategory(catName);
+        }
+
+        function updateCategoryDropdown() {
+            const sel = document.getElementById('targetCat');
+            const currentVal = sel.value;
+            sel.innerHTML = '<option value="">-- Select Category --</option>';
+            categories.forEach(c => {
+                const opt = document.createElement('option');
+                opt.value = c.name; opt.textContent = c.name;
+                sel.appendChild(opt);
+            });
+            sel.value = currentVal;
+        }
+
+        function populateItemList() {
+            const catName = document.getElementById('targetCat').value;
+            const itemSel = document.getElementById('itemDropdown');
+            itemSel.innerHTML = '<option value="">-- Select Item --</option>';
+            
+            const cat = categories.find(c => c.name === catName);
+            if (cat) {
+                cat.items.forEach(item => {
+                    const opt = document.createElement('option');
+                    opt.value = item.n;
+                    opt.textContent = item.n;
+                    itemSel.appendChild(opt);
+                });
+            }
+        }
+
+        function syncItemName() {
+            document.getElementById('itemName').value = document.getElementById('itemDropdown').value;
+        }
+
+        function addItemFromUI() {
+            const catName = document.getElementById('targetCat').value;
+            const name = document.getElementById('itemName').value.trim();
+            const qty = document.getElementById('itemQty').value;
+            const unit = document.getElementById('unitType').value;
+
+            if (!catName || !name) return alert("Select Category and Item");
+
+            const cat = categories.find(c => c.name === catName);
+            const item = cat.items.find(i => i.n === name);
+            
+            if (item) {
+                item.q = qty;
+                item.u = unit;
+            } else {
+                cat.items.push({ n: name, q: qty, u: unit });
+            }
+            
+            document.getElementById('itemQty').value = "";
+            renderTable();
+        }
+
+        function deleteItem(cName, iName) {
+            const cat = categories.find(c => c.name === cName);
+            cat.items = cat.items.filter(i => i.n !== iName);
+            renderTable();
+        }
+
+        function toggleMenu() { document.getElementById('sidebar').classList.toggle('open'); }
+        
+        function autoScale() {
+            const factor = Math.min(1, (document.querySelector('.main-content').clientWidth - 40) / 850);
+            document.getElementById('tableScaler').style.transform = `scale(${factor})`;
+        }
+
+        function previewImg(e, id) {
+            const reader = new FileReader();
+            reader.onload = () => document.getElementById(id).innerHTML = `<img src="${reader.result}">`;
+            reader.readAsDataURL(e.target.files[0]);
+        }
+
+        function exportPng() {
+            const scaler = document.getElementById('tableScaler');
+            scaler.style.transform = "scale(1)";
+            html2canvas(document.getElementById('captureArea')).then(canvas => {
+                const link = document.createElement('a');
+                link.download = 'KitchenInventory.png';
+                link.href = canvas.toDataURL();
+                link.click();
+                autoScale();
+            });
+        }
+
+        window.onload = renderTable;
+        window.onresize = autoScale;
+    </script>
+</body>
+</html>
