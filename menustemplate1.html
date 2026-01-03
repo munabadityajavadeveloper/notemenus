@@ -89,7 +89,7 @@
 
         #menuBtn {
             display: none; position: fixed; top: 15px; left: 15px;
-            width: 50px; height: 50px; border-radius: 8px;
+            width: 150px; height: 50px; border-radius: 8px;
             background: var(--dark); color: white; z-index: 2001; border: none;
         }
 
@@ -125,9 +125,77 @@
             visibility: hidden; background: #fff; padding: 0px 4px; 
             font-size: 10px; border-radius: 3px; border: 1px solid #ddd;
         }
+        .button-17 {
+  align-items: center;
+  appearance: none;
+  background-color: #fff;
+  border-radius: 24px;
+  border-style: none;
+  box-shadow: rgba(0, 0, 0, .2) 0 3px 5px -1px,rgba(0, 0, 0, .14) 0 6px 10px 0,rgba(0, 0, 0, .12) 0 1px 18px 0;
+  box-sizing: border-box;
+  color: #3c4043;
+  cursor: pointer;
+  display: inline-flex;
+  fill: currentcolor;
+  font-family: "Google Sans",Roboto,Arial,sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  height: 48px;
+  justify-content: center;
+  letter-spacing: .25px;
+  line-height: normal;
+  max-width: 100%;
+  overflow: visible;
+  padding: 2px 24px;
+  position: relative;
+  text-align: center;
+  text-transform: none;
+  transition: box-shadow 280ms cubic-bezier(.4, 0, .2, 1),opacity 15ms linear 30ms,transform 270ms cubic-bezier(0, 0, .2, 1) 0ms;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  width: auto;
+  will-change: transform,opacity;
+  z-index: 0;
+}
+
+.button-17:hover {
+  background: #F6F9FE;
+  color: #174ea6;
+}
+
+.button-17:active {
+  box-shadow: 0 4px 4px 0 rgb(60 64 67 / 30%), 0 8px 12px 6px rgb(60 64 67 / 15%);
+  outline: none;
+}
+
+.button-17:focus {
+  outline: none;
+  border: 2px solid #4285f4;
+}
+
+.button-17:not(:disabled) {
+  box-shadow: rgba(60, 64, 67, .3) 0 1px 3px 0, rgba(60, 64, 67, .15) 0 4px 8px 3px;
+}
+
+.button-17:not(:disabled):hover {
+  box-shadow: rgba(60, 64, 67, .3) 0 2px 3px 0, rgba(60, 64, 67, .15) 0 6px 10px 4px;
+}
+
+.button-17:not(:disabled):focus {
+  box-shadow: rgba(60, 64, 67, .3) 0 1px 3px 0, rgba(60, 64, 67, .15) 0 4px 8px 3px;
+}
+
+.button-17:not(:disabled):active {
+  box-shadow: rgba(60, 64, 67, .3) 0 4px 4px 0, rgba(60, 64, 67, .15) 0 8px 12px 6px;
+}
+
+.button-17:disabled {
+  box-shadow: rgba(60, 64, 67, .3) 0 1px 3px 0, rgba(60, 64, 67, .15) 0 4px 8px 3px;
+}
         td:hover .del-btn { visibility: visible; }
 
-        .img-slot { width: 50px; height: 50px; border: 1px dashed #ccc; margin: auto; display: flex; align-items: center; justify-content: center; overflow: hidden; background: #f8fafc; }
+        .img-slot { width: 120px; height: 120px; border: 1px dashed #ccc; margin: auto; display: flex; align-items: center; justify-content: center; overflow: hidden; background: #f8fafc; }
         .img-slot img { width: 100%; height: 100%; object-fit: cover; }
 
         .unit-tag { font-size: 9px; background: #f1f5f9; padding: 2px 4px; border-radius: 3px; color: #64748b; font-weight: bold; margin-left: 5px; }
@@ -142,49 +210,50 @@
 <body>
     
 
-    <button id="menuBtn" onclick="toggleMenu()">☰</button>
+    <button id="menuBtn" onclick="toggleMenu()">☰ CREATE MENU</button>
 
     <div id="sidebar">
         <div class="sidebar-header">KITCHEN PRO</h3></div>
         <div id="controls">
 
             <div class="card" style="border: 1px solid var(--warning);">
-                <h4>0. Add New Category</h4>
-                <input type="text" id="newCatName" placeholder="Category Name (e.g. Fruits)">
+                <h4>Add New Product Heading Name</h4>
+                <input type="text" id="newCatName" placeholder="Heading Name (e.g.Masala, Sauce,etc.)">
+                <h4>Choose Menu Side</h4>
                 <select id="newCatSide">
                     <option value="L">Left Side</option>
                     <option value="R">Right Side</option>
                 </select>
-                <button class="btn" style="background: var(--warning); color: #000;" onclick="addNewCategory()">+ Create Category</button>
+                <button class="btn" style="background: var(--warning); color: #000;" onclick="addNewCategory()">Create Heading</button>
             </div>
             
             <div class="card" style="border: 1px solid var(--primary);">
-                <h4>1. Entry Selector</h4>
+                <h4>Choose Heading</h4>
                 <select id="targetCat" onchange="populateItemList()"></select>
-                <button class="btn" style="background: var(--danger); font-size: 10px;" onclick="deleteCategoryFromUI()">🗑️ Delete Selected Category</button>
-                
+                <h4>Choose name</h4>
                 <select id="itemDropdown" onchange="syncItemName()">
-                    <option value="">-- Choose Item --</option>
+                    <option value="">-- Choose Name --</option>
                 </select>
-                <input type="text" id="itemName" placeholder="Confirm/Edit Item Name">
+                <h4>Confirm/Edit Name</h4>
+                <input type="text" id="itemName" placeholder="Confirm/Edit Name">
             </div>
 
             <div class="card" style="border: 1px solid var(--success);">
-                <h4>2. Quantity & Unit</h4>
+                <h4>Choose Quantity </h4>
                 <input type="text" id="itemQty" placeholder="Value (e.g. 50)">
                 <select id="unitType">
-                    <option value="Kg">Kilogram (Kg)</option>
-                    <option value="Gram">Gram (gm)</option>
-                    <option value="Price">$ (Price)</option>
-                    <option value="Pic">Piece/Icon</option>
+                    <option value="Kg">Kg</option>
+                    <option value="G.m">G.m</option>
+                    <option value="₹/Rs.">₹/Rs.</option>
+                    <option value="Pic">Pic.</option>
                 </select>
                 <button class="btn" style="background: var(--success);" onclick="addItemFromUI()">Update Table</button>
             </div>
 
             <div class="card">
-                <h4>3. Settings</h4>
+                <h4>Export</h4>
                 <button class="btn" style="background: #6366f1;" onclick="exportPng()">💾 Save PNG</button>
-                <button class="btn" style="background: var(--danger);" onclick="window.print()">🖨️ Print PDF</button>
+            <!--  <button class="btn" style="background: var(--danger);" onclick="window.print()">🖨️ Print PDF</button>-->
             </div>
         </div>
     </div>
@@ -198,32 +267,34 @@
                             <td style="width:18%; text-align:center;">
                                 <div class="img-slot" id="logoSlot">LOGO</div>
                                 <input type="file" id="logoInp" hidden onchange="previewImg(event, 'logoSlot')">
-                                <button onclick="document.getElementById('logoInp').click()" style="font-size:8px; border:none; background:none; color:var(--primary); cursor:pointer;">UPLOAD</button>
+                                <button onclick="document.getElementById('logoInp').click()" style="font-size:8px; border:none; background:none; color:var(--primary); cursor:pointer;" class="button-17" role="button">UPLOAD LOGO</button>
                             </td>
                             <th colspan="2">
-                                <div class="red-header" contenteditable="true" style="background-image: url('headimg.jpg');" width="50px">STARTER FACTORY</div>
-                                <p id="headerAddress">Old Berhampur, Radhakanta Street, Berhampur</p>
-                                <p id="headerPhone">📞 9938618356 | 9658216341</p>
-                                <p id="headerDealsIn">Deals in: Starters, Chinese, Tandoori, South Indian, Pendir</p>
-                                <h2><u id="menuTitle">Menu</u></h2>
-                        
-                                <div style="text-align:center; font-size:11px; color:#64748b; margin-top:5px; font-weight:500;">DAILY STOCK CHECKLIST</div>
+                                <div class="red-header" contenteditable="true" style="background-image: url('headimg.jpg');" width="50px" aria-placeholder="Enter title" >STARTER FACTORY</div>
+                                <p class="headerAddress" id="headerAddress" contenteditable="true">Old Berhampur Anand Marg 2 lain</p>
+                                <p id="headerPhone" contenteditable="true">📞 9938618356 | 9658216341</p>
+                                <p id="headerDealsIn" contenteditable="true">Deals in:Starters, Chinese, Tandoori, South Indian, Pendir</p>
+                                <p id="headerDealsIn" contenteditable="true">----------</p>
+                                <h2><u id="menuTitle" contenteditable="true">Menu</u></h2>
+                                <p>www.notemenus.in</p>
+                                <div style="text-align:center; font-size:11px; color:#64748b; margin-top:5px; font-weight:500;">DAILY LIST</div>
                             </th>
                             <td style="width:18%; text-align:center;">
                                 <div class="img-slot" id="itemSlot">PHOTO</div>
                                 <input type="file" id="itemInp" hidden onchange="previewImg(event, 'itemSlot')">
-                                <button onclick="document.getElementById('itemInp').click()" style="font-size:8px; border:none; background:none; color:var(--primary); cursor:pointer;">UPLOAD</button>
+                                <button onclick="document.getElementById('itemInp').click()" style="font-size:8px; border:none; background:none; color:var(--primary); cursor:pointer;"class="button-17" role="button">UPLOAD IMAGE</button>
                             </td>
                         </tr>
                         <tr class="black-bar">
-                            <td style="width:35%">DESCRIPTION</td><td style="width:15%">QTY/UNIT</td>
-                            <td style="width:35%">DESCRIPTION</td><td style="width:15%">QTY/UNIT</td>
+                            <td style="width:10%">Name</td><td style="width:10%">Quantity</td>
+                            <td style="width:10%">Name</td><td style="width:10%">Quantity</td>
                         </tr>
                     </thead>
                     <tbody id="tableBody"></tbody>
                     <tr>
                         <td colspan="4" style="text-align:center; font-size:10px; color:#64748b; padding:10px 0;">
-                           <strong><h4>Made by www.notemenus.in</h4></strong>
+                             <strong><h3>Thank You for Visiting</h3></strong>
+                             <strong><h4>Made by www.notemenus.in</h4></strong>
                     </tr>
                 </table>
             </div>
@@ -236,12 +307,62 @@
         // MASTER DATA STATE
         let categories = [
             { name: "Masala Powders", side: "L", items: [
-                {n: "Turmeric", q: "", u: ""}, {n: "Cumin", q: "", u: ""}, {n: "Coriander", q: "", u: ""},
-                {n: "Red Chili", q: "", u: ""}, {n: "Black Pepper", q: "", u: ""}, {n: "Garam Masala", q: "", u: ""}
+                {n: "ଧନିଆ ପାଉଡର", q: "", u: ""}, {n: "ଜିରା ପାଉଡର ", q: "", u: ""}, {n: "Meat Masala", q: "", u: ""},
+                {n: "Chicken Masala", q: "", u: ""}, {n: "Chili Powder", q: "", u: ""}, {n: "Black Paper Powder", q: "", u: ""},
+                {n: "White Paper Powder", q: "", u: ""},{n: "Corn Flower", q: "", u: ""},{n: "Aeromatic Powder", q: "", u: ""},
+                {n: "Chili Flex", q: "", u: ""},{n: "Oregano", q: "", u: ""},{n: "Bread Garlic", q: "", u: ""},
+                {n: "Basil", q: "", u: ""}, {n: "Pizza Sezeling", q: "", u: ""}, {n: "Peri Peri Seasoning", q: "", u: ""}, {n: "China Salt", q: "", u: ""},
+                 {n: "Besana", q: "", u: ""}, {n: "Beaking Powder", q: "", u: ""}, {n: "ଧଳା ରାଶି", q: "", u: ""}, {n: "କଳା ରାଶି", q: "", u: ""}, {n: "Soda", q: "", u: ""},
+                  {n: "Black Salt", q: "", u: ""}, {n: "Tata Salt", q: "", u: ""}, {n: "Oil", q: "", u: ""}, {n: "Red Colour", q: "", u: ""}, {n: "Green Colour", q: "", u: ""},
+                   {n: "Yellow Colour", q: "", u: ""}, {n: "Mustard Oil", q: "", u: ""}, {n: "Dalda", q: "", u: ""}, {n: "ଡ଼ାଲଚିନି", q: "", u: ""}, {n: "ଅଳେଇଚ", q: "", u: ""},
+                    {n: "ଲବଙ୍ଗ", q: "", u: ""}, {n: "କସ୍ତୁରି ମେଥ୍", q: "", u: ""}, {n: "ଅନାସି ଫୁଲ", q: "", u: ""}, {n: "ଜାଇଫଳ", q: "", u: ""}, {n: "ଜାଇପତ୍ରି", q: "", u: ""},
+                    {n: "କାଜୁ (ଗୋଟା", q: "", u: ""},
+                    {n: "କାଜୁ (ଫାଳ)", q: "", u: ""},
+                    {n: "କାଜୁ (ଗୁଣ୍ଡ)", q: "", u: ""},
+                    {n: "ମଗଜ", q: "", u: ""},
+                    {n: "ପୁସ୍ତା", q: "", u: ""},
+                     {n: "ଅଦା", q: "", u: ""}, {n: "ଲହୁଣ", q: "", u: ""},{n: "Garlic Paste", q: "", u: ""},{n: "Ginger Paste", q: "", u: ""}
+            ]},
+            { name: "Oil & Sauce", side: "R", items: [
+                {n: "Olive Oil", q: "", u: ""}, {n: "Soy Sauce", q: "", u: ""}, {n: "Vinegar", q: "", u: ""},
+                 {n: "Lime Juice Pure", q: "", u: ""}, {n: "Lemon Easy", q: "", u: ""},
+                  {n: "Salat Oil", q: "", u: ""},
+                   {n: "Pomace Olive Oil (Italy)", q: "", u: ""},
+                   {n: "Fresh Cream", q: "", u: ""},{n: "Magerala Chees", q: "", u: ""},
+                   {n: "Amul Chees", q: "", u: ""},
+                   {n: "Mayonnaise Professional", q: "", u: ""},
+                   {n: "Tandoori Mayonnaise", q: "", u: ""},
+                   {n: "Pizza Pasta Sauce", q: "", u: ""},
+                   {n: "Pizza Tuppin Sauce", q: "", u: ""},
+                   {n: "Schzewan Sauce", q: "", u: ""},
+                   {n: "Garlic Chilli Sauce", q: "", u: ""},
+                   {n: "Tamato Ketchup", q: "", u: ""},
+                   {n: "Snack Sauce", q: "", u: ""},
+                   {n: "Continental Sauce", q: "", u: ""},
+                   {n: "Green Chili Sauce", q: "", u: ""},
+                   {n: "Red Chilli Sauce", q: "", u: ""},
+                   {n: "Soya Sauce", q: "", u: ""},
+                   {n: "Tomato Sauce", q: "", u: ""},
+                   {n: "Sweet Chilli Sauce", q: "", u: ""},
+                   {n: "Thousand Isaland", q: "", u: ""},
+                   {n: "Cheese Dressing", q: "", u: ""},
+                   {n: "8 to 8 Sauce", q: "", u: ""},
+                   {n: "Mustard Kasundi", q: "", u: ""},
+                   {n: "Kapsikom Sauce", q: "", u: ""},
+                   {n: "Chilly Sauce", q: "", u: ""}, {n: "Tomato Sauce", q: "", u: ""},
+                   {n: "Mayonnaise", q: "", u: ""}, {n: "Mustard Sauce", q: "", u: ""},
+                   {n: "Barbeque Sauce", q: "", u: ""}
             ]},
             { name: "Non-Veg", side: "R", items: [
-                {n: "Chicken Breast", q: "", u: ""}, {n: "Lamb Chops", q: "", u: ""}, {n: "Salmon Fillet", q: "", u: ""}
+                {n: "Chicken", q: "", u: ""}, {n: "Prawan", q: "", u: ""}, {n: "Mutton", q: "", u: ""},
+                {n: "Egg pic", q: "", u: ""}, {n: "Fish", q: "", u: ""}, {n: "Crab", q: "", u: ""}
+
+            ]},
+
+            { name: "Vegetable", side: "L", items: [
+                {n: "Onion", q: "", u: ""}, {n: "Potato", q: "", u: ""}, {n: "Spinach", q: "", u: ""}
             ]}
+
         ];
 
         function renderTable() {
@@ -276,7 +397,7 @@
             if (!data) return td;
             if (data.isH) {
                 td.className = "cat-label";
-                td.innerHTML = `📦 ${data.t.toUpperCase()} <button class="del-cat-btn" onclick="confirmDeleteCategory('${data.t}')">DEL</button>`;
+                td.innerHTML = `${data.t.toUpperCase()} <button class="del-cat-btn" onclick="confirmDeleteCategory('${data.t}')">DEL</button>`;
             } else {
                 td.innerHTML = `<span contenteditable="true">${data.t}</span>`;
             }
@@ -330,7 +451,7 @@
         function updateCategoryDropdown() {
             const sel = document.getElementById('targetCat');
             const currentVal = sel.value;
-            sel.innerHTML = '<option value="">-- Select Category --</option>';
+            sel.innerHTML = '<option value="">-- Select Heading --</option>';
             categories.forEach(c => {
                 const opt = document.createElement('option');
                 opt.value = c.name; opt.textContent = c.name;
@@ -342,7 +463,7 @@
         function populateItemList() {
             const catName = document.getElementById('targetCat').value;
             const itemSel = document.getElementById('itemDropdown');
-            itemSel.innerHTML = '<option value="">-- Select Item --</option>';
+            itemSel.innerHTML = '<option value=""> -- Select Item --</option>';
             
             const cat = categories.find(c => c.name === catName);
             if (cat) {
@@ -405,13 +526,12 @@
             scaler.style.transform = "scale(1)";
             html2canvas(document.getElementById('captureArea')).then(canvas => {
                 const link = document.createElement('a');
-                link.download = 'KitchenInventory.png';
+                link.download = 'www.notemenus.in MenuIngrediants.png';
                 link.href = canvas.toDataURL();
                 link.click();
                 autoScale();
             });
         }
-
         window.onload = renderTable;
         window.onresize = autoScale;
     </script>
