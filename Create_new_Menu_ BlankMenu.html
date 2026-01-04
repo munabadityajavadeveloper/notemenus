@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Note Menus Template</title>
+    <!-- Fonts: Inter for English, Noto Sans Oriya for Odia -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800&family=Noto+Sans+Oriya:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* CSS */
+        .button-3 {
+            appearance: none;
+            background-color: #2ea44f;
+            border: 1px solid rgba(27, 31, 35, .15);
+            border-radius: 6px;
+            box-shadow: rgba(27, 31, 35, .1) 0 1px 0;
+            box-sizing: border-box;
+            color: #fff;
+            cursor: pointer;
+            display: inline-block;
+            font-family: -apple-system,system-ui,"Segoe UI",Helvetica,Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji";
+            font-size: 14px;
+            font-weight: 600;
+            line-height: 20px;
+            padding: 6px 16px;
+            position: relative;
+            text-align: center;
+            text-decoration: none;
+            user-select: none;
+            -webkit-user-select: none;
+            touch-action: manipulation;
+            vertical-align: middle;
+            white-space: nowrap;
+        }
+
+        .button-3:focus:not(:focus-visible):not(.focus-visible) {
+            box-shadow: none;
+            outline: none;
+        }
+
+        .button-3:hover {
+            background-color: #2c974b;
+        }
+
+        .button-3:focus {
+            box-shadow: rgba(46, 164, 79, .4) 0 0 0 3px;
+            outline: none;
+        }
+
+        .button-3:disabled {
+            background-color: #94d3a2;
+            border-color: rgba(27, 31, 35, .1);
+            color: rgba(255, 255, 255, .8);
+            cursor: default;
+        }
+
+        .button-3:active {
+            background-color: #298e46;
+            box-shadow: rgba(20, 70, 32, .2) 0 1px 0 inset;
+        }
+
+        :root {
+            --sidebar-width: 320px;
+            --primary: #2563eb;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --dark: #0f172a;
+            --bg: #f1f5f9;
+            --odia-color: #7c3aed;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-font-smoothing: antialiased; }
+
+        body {
+            font-family: 'Inter', 'Noto Sans Oriya', sans-serif;
+            background-color: #334155;
+            display: flex;
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+        }
+
+        /* ===== SIDEBAR ===== */
+        #sidebar {
+            width: var(--sidebar-width);
+            background: var(--dark);
+            color: white;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+            z-index: 2000;
+            transition: transform 0.3s ease;
+            border-right: 1px solid #334155;
+        }
+
+        .sidebar-header {
+            padding: 20px;
+            background: #1e293b;
+            text-align: center;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        #controls { padding: 15px; overflow-y: auto; flex: 1; }
+
+        .card {
+            background: rgba(255,255,255,0.05);
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .lang-toggle-box {
+            display: flex;
+            background: #000;
+            border-radius: 6px;
+            margin-bottom: 10px;
+            padding: 2px;
+        }
+
+        .lang-btn {
+            flex: 1;
+            padding: 5px;
+            border: none;
+            background: transparent;
+            color: #94a3b8;
+            cursor: pointer;
+            font-size: 11px;
+            font-weight: bold;
+            border-radius: 4px;
+        }
+
+        .lang-btn.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        .lang-btn.active.or {
+            background: var(--odia-color);
+        }
+
+        h4 { font-size: 10px; color: #94a3b8; text-transform: uppercase; margin-bottom: 8px; letter-spacing: 1px; }
+
+        input, select {
+            width: 100%; padding: 10px; margin-bottom: 10px;
+            background: #0f172a; border: 1px solid #334155;
+            color: white; border-radius: 6px; font-size: 13px;
+            outline: none; font-family: inherit;
+        }
+        input:focus { border-color: var(--primary); }
+
+        .btn {
+            width: 100%; padding: 10px; border: none; border-radius: 6px;
+            font-weight: bold; cursor: pointer; margin-bottom: 5px; color: white;
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+            font-size: 13px;
+        }
+
+        /* ===== MAIN CONTENT ===== */
+        .main-content {
+            flex: 1;
+            position: relative;
+            overflow: auto;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 40px 20px;
+        }
+
+        #menuBtn {
+            display: none; position: fixed; top: 15px; left: 15px;
+            width: 150px; height: 50px; border-radius: 8px;
+            background: var(--dark); color: white; z-index: 2001; border: none;
+        }
+
+        /* ===== TABLE AREA ===== */
+        #tableScaler { transform-origin: top center; transition: transform 0.2s; }
+
+        #captureArea {
+            background: white; padding: 30px;
+            width: 850px; min-height: 1100px;
+            box-shadow: 0 0 40px rgba(0,0,0,0.1);
+        }
+
+        table { width: 100%; border-collapse: collapse; border: 2.5px solid #000; table-layout: fixed; }
+        th, td { border: 1px solid #000; padding: 4px 8px; vertical-align: middle; position: relative; height: 32px; font-size: 13px; }
+        
+        .red-header { color: #b91c1c; font-size: 32px; font-weight: 800; text-align: center; line-height: 1.2; }
+        .black-bar { background: #0b5394; color: #fff; text-align: center; font-size: 10px; font-weight: 800; }
+        
+        .cat-label { 
+            background: #cbd5e1; font-weight: 800; font-size: 12px; 
+            color: #000; letter-spacing: 0.5px; position: relative;
+        }
+
+        .del-cat-btn {
+            position: absolute; right: 5px; top: 50%; transform: translateY(-50%);
+            background: var(--danger); color: white; border: none; font-size: 8px;
+            padding: 2px 5px; border-radius: 3px; cursor: pointer; visibility: hidden;
+        }
+        .cat-label:hover .del-cat-btn { visibility: visible; }
+
+        .del-btn { 
+            color: var(--danger); cursor: pointer; position: absolute; right: 2px; 
+            visibility: hidden; background: #fff; padding: 0px 4px; 
+            font-size: 10px; border-radius: 3px; border: 1px solid #ddd;
+        }
+        td:hover .del-btn { visibility: visible; }
+
+        .img-slot { width: 120px; height: 120px; border: 1px dashed #ccc; margin: auto; display: flex; align-items: center; justify-content: center; overflow: hidden; background: #f8fafc; }
+        .img-slot img { width: 100%; height: 100%; object-fit: cover; }
+
+        .unit-tag { font-size: 10px; background: #f1f5f9; padding: 2px 4px; border-radius: 3px; color: #64748b; font-weight: bold; margin-left: 5px; }
+
+        .no-heading-warning {
+            font-size: 9px;
+            color: #f59e0b;
+            margin-top: -8px;
+            margin-bottom: 10px;
+        }
+
+        @media (max-width: 1024px) {
+            #menuBtn { display: block; }
+            #sidebar { position: fixed; left: 0; transform: translateX(-100%); }
+            #sidebar.open { transform: translateX(0); }
+        }
+    </style>
+</head>
+<body>
+
+    <button id="menuBtn" onclick="toggleMenu()">☰ SETTINGS</button>
+
+    <div id="sidebar">
+        <div class="sidebar-header">MENUS</h3></div>
+        <div id="controls">
+
+            <!-- 3. INPUT SELECTION LANGUAGE CONTROL -->
+            <div class="card" style="border: 1px solid var(--odia-color);">
+                <h4>1. Input Interface Language</h4>
+                <div class="lang-toggle-box">
+                    <button class="lang-btn active" id="btn-in-en" onclick="setInputLang('en')">English</button>
+                    <button class="lang-btn or" id="btn-in-or" onclick="setInputLang('or')">ଓଡ଼ିଆ</button>
+                </div>
+                <p style="font-size: 9px; color: #94a3b8; margin-top: -5px;">*Changes placeholders & suggestions only</p>
+            </div>
+
+            <div class="card" style="border: 1px solid var(--warning);">
+                <h4 id="label-cat-name">Heading Name</h4>
+                <input type="text" id="newCatName" placeholder="e.g. Masala / ମସଲା">
+                <h4 id="label-cat-side">Choose Side</h4>
+                <select id="newCatSide">
+                    <option value="L">Left Side</option>
+                    <option value="R">Right Side</option>
+                </select>
+                <button class="btn" style="background: var(--warning); color: #000;" onclick="addNewCategory()" id="btn-add-cat">Create Heading</button>
+            </div>
+            
+            <div class="card" style="border: 1px solid var(--primary);">
+                <h4 id="label-target-cat">Select Heading (Optional)</h4>
+                <div class="no-heading-warning" id="no-heading-warning">Leave empty to add without heading</div>
+                <select id="targetCat">
+                    <option value="">-- No Heading --</option>
+                </select>
+                <h4 id="label-item-select">Item Name</h4>
+                <input type="text" id="itemName" placeholder="Enter new item name" list="itemSuggestions">
+                <datalist id="itemSuggestions">
+                    <!-- Suggestions will be populated by JavaScript -->
+                </datalist>
+            </div>
+
+            <div class="card" style="border: 1px solid var(--success);">
+                <h4 id="label-qty">Quantity / Unit</h4>
+                <div style="display: flex; gap: 5px;">
+                    <input type="text" id="itemQty" placeholder="Qty" style="flex: 1;">
+                    <select id="unitType" style="flex: 1;">
+                        <option value="Kg">Kg</option>
+                        <option value="G.m">G.m</option>
+                        <option value="Pkt">Pkt</option>
+                        <option value="Ltr">Ltr</option>
+                        <option value="Pic">Pic.</option>
+                        <option value="Piece">Piece</option>
+                        <option value="Box">Box</option>
+                    </select>
+                </div>
+                <button class="btn" style="background: var(--success);" onclick="addItemFromUI()" id="btn-update">Update Table</button>
+            </div>
+
+            <div class="card">
+                <button class="btn" style="background: #6366f1;" onclick="exportPng()">💾 Save as PNG Image</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div id="tableScaler">
+            <div id="captureArea">
+                <table>
+                    <thead>
+                        <tr>
+                            <td style="width:18%; text-align:center;">
+                                <div class="img-slot" id="logoSlot">LOGO</div>
+                                <input type="file" id="logoInp" hidden onchange="previewImg(event, 'logoSlot')">
+                                <button onclick="document.getElementById('logoInp').click()" style="font-size:8px; border:none; color:#ffffff; cursor:pointer;" class="button-3" role="button">UPLOAD</button>
+                            </td>
+                            <th colspan="2" style="position: relative;">
+                                <div class="red-header" id="mainHeader" contenteditable="true">STARTER FACTORY</div>
+                                <p id="headerAddress" contenteditable="true">Street Name, City, Odisha</p>
+                                <p id="headerPhone" contenteditable="true">📞 9938618356 | 9658216341</p>
+                                <p id="headerDeals" contenteditable="true">Deals in: Starters, Chinese, Tandoori</p>
+                                <h2 style="margin-top:10px;"><u id="menuTitle" contenteditable="true">Daily Inventory List</u></h2>
+                                <p style="font-size: 10px; color:#64748b;">www.notemenus.in</p>
+                            </th>
+                            <td style="width:18%; text-align:center;">
+                                <div class="img-slot" id="itemSlot">PHOTO</div>
+                                <input type="file" id="itemInp" hidden onchange="previewImg(event, 'itemSlot')">
+                                <button onclick="document.getElementById('itemInp').click()" style="font-size:8px; border:none; color:#ffffff; cursor:pointer;" class="button-3" role="button">UPLOAD</button>
+                            </td>
+                        </tr>
+                        <tr class="black-bar">
+                            <td style="width:35%" id="col-name-1">Item Name</td><td style="width:15%" id="col-qty-1">Qty</td>
+                            <td style="width:35%" id="col-name-2">Item Name</td><td style="width:15%" id="col-qty-2">Qty</td>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody"></tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="4" style="text-align:center; font-size:10px; color:#64748b; padding:10px 0;">
+                                <strong>Generated by www.notemenus.in</strong>
+                            </td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+    <script>
+        // MASTER DATA
+        let categories = [
+            { name: "Masala / ମସଲା", side: "L", items: [] },
+            { name: "Vegetables / ପନିପରିବା", side: "R", items: [] }
+        ];
+
+        // Uncategorized items (for items without heading)
+        let uncategorizedItems = {
+            L: [], // Items without heading on left side
+            R: []  // Items without heading on right side
+        };
+
+        const translations = {
+            en: {
+                catName: "Heading Name", catSide: "Choose Side", addBtn: "Create Heading",
+                selCat: "Select Heading (Optional)", selItem: "Item Name", confirmName: "Confirm Name",
+                qty: "Quantity", updateBtn: "Update Table",
+                colName: "Item Name", colQty: "Qty",
+                items: ["Chicken", "Paneer", "Oil", "Potato", "Onion", "Salt", "Sugar", "Rice", "Flour", "Spices",
+                "Meet Masala", "Chicken Masala", "Chili Powder", "Black Paper Powder", "White Paper Powder", "Corn Flower",
+                "Aeromatic Powder", "Chili Flex", "Oregano", "Bread Garlic", "Basil", "Pizza Sezeling", "Peri Peri Seasoning",
+                "China Salt", "Besana", "Beaking Powder", "Soda"
+
+                ],
+                noHeadingWarning: "Leave empty to add without heading"
+            },
+            or: {
+                catName: "ଶିରୋନାମା ନାମ", catSide: "ପାର୍ଶ୍ୱ ବାଛନ୍ତୁ", addBtn: "ହେଡିଂ ପ୍ରସ୍ତୁତ କରନ୍ତୁ",
+                selCat: "ହେଡିଂ ବାଛନ୍ତୁ (ଇଚ୍ଛାଧୀନ)", selItem: "ସାମଗ୍ରୀ ନାମ", confirmName: "ନାମ ନିଶ୍ଚିତ କରନ୍ତୁ",
+                qty: "ପରିମାଣ", updateBtn: "ଟେବୁଲ୍ ଅପଡେଟ୍",
+                colName: "ସାମଗ୍ରୀ ନାମ", colQty: "ପରିମାଣ",
+                items: ["କୁକୁଡ଼ା ମାଂସ", "ପନିର", "ତେଲ", "ଆଳୁ", "ପିଆଜ", "ଲୁଣ", "ଚିନି", "ଚାଉଳ", "ମଇଦା", "ମସଲା", "ଧନିଆ ପାଉଡର",
+                    "ଜିରା ମସଲା", "ମୋଇ", "ଧଳା ରାଶି", "କଳା ରାଶି" 
+                ],
+                noHeadingWarning: "ଖାଲି ଛାଡନ୍ତୁ ଯଦି ହେଡିଂ ବିନା ଯୋଡିବାକୁ ଚାହୁଁଛନ୍ତି"
+            }
+        };
+
+        // --- Input UI Language ---
+        function setInputLang(lang) {
+            document.getElementById('btn-in-en').classList.toggle('active', lang === 'en');
+            document.getElementById('btn-in-or').classList.toggle('active', lang === 'or');
+
+            const t = translations[lang];
+            document.getElementById('label-cat-name').innerText = t.catName;
+            document.getElementById('label-cat-side').innerText = t.catSide;
+            document.getElementById('btn-add-cat').innerText = t.addBtn;
+            document.getElementById('label-target-cat').innerText = t.selCat;
+            document.getElementById('label-item-select').innerText = t.selItem;
+            document.getElementById('label-qty').innerText = t.qty;
+            document.getElementById('btn-update').innerText = t.updateBtn;
+            document.getElementById('no-heading-warning').innerText = t.noHeadingWarning;
+            
+            // Update Table Static Columns
+            document.getElementById('col-name-1').innerText = t.colName;
+            document.getElementById('col-name-2').innerText = t.colName;
+            document.getElementById('col-qty-1').innerText = t.colQty;
+            document.getElementById('col-qty-2').innerText = t.colQty;
+
+            // Update Suggestions in datalist
+            const datalist = document.getElementById('itemSuggestions');
+            datalist.innerHTML = '';
+            t.items.forEach(i => {
+                const option = document.createElement('option');
+                option.value = i;
+                datalist.appendChild(option);
+            });
+        }
+
+        function renderTable() {
+            const tbody = document.getElementById('tableBody');
+            tbody.innerHTML = "";
+            let LRows = [], RRows = [];
+
+            // Add categorized items (with headings)
+            categories.filter(c => c.side === 'L').forEach(cat => {
+                LRows.push({ isH: true, t: cat.name });
+                cat.items.forEach(i => LRows.push({ isH: false, t: i.n, q: i.q, u: i.u, c: cat.name }));
+            });
+            categories.filter(c => c.side === 'R').forEach(cat => {
+                RRows.push({ isH: true, t: cat.name });
+                cat.items.forEach(i => RRows.push({ isH: false, t: i.n, q: i.q, u: i.u, c: cat.name }));
+            });
+
+            // Add uncategorized items (without headings)
+            if (uncategorizedItems.L.length > 0) {
+                // Add a placeholder heading for uncategorized items
+                LRows.push({ isH: true, t: "Uncategorized / ଅଶ୍ରେଣୀକୃତ" });
+                uncategorizedItems.L.forEach(i => LRows.push({ isH: false, t: i.n, q: i.q, u: i.u, c: "Uncategorized" }));
+            }
+            
+            if (uncategorizedItems.R.length > 0) {
+                RRows.push({ isH: true, t: "Uncategorized / ଅଶ୍ରେଣୀକୃତ" });
+                uncategorizedItems.R.forEach(i => RRows.push({ isH: false, t: i.n, q: i.q, u: i.u, c: "Uncategorized" }));
+            }
+
+            const max = Math.max(LRows.length, RRows.length, 20);
+            for (let i = 0; i < max; i++) {
+                const tr = document.createElement('tr');
+                tr.appendChild(createCell(LRows[i]));
+                tr.appendChild(createQtyCell(LRows[i]));
+                tr.appendChild(createCell(RRows[i]));
+                tr.appendChild(createQtyCell(RRows[i]));
+                tbody.appendChild(tr);
+            }
+            updateCategoryDropdown();
+            autoScale();
+        }
+
+        function createCell(data) {
+            const td = document.createElement('td');
+            if (!data) return td;
+            if (data.isH) {
+                td.className = "cat-label";
+                // Only show delete button for user-created categories, not for "Uncategorized"
+                const deleteBtn = data.t === "Uncategorized / ଅଶ୍ରେଣୀକୃତ" ? '' : `<button class="del-cat-btn" onclick="deleteCategory('${data.t}')">DEL</button>`;
+                td.innerHTML = `📦 ${data.t.toUpperCase()} ${deleteBtn}`;
+            } else {
+                td.innerHTML = `<span contenteditable="true">${data.t}</span>`;
+            }
+            return td;
+        }
+
+        function createQtyCell(data) {
+            const td = document.createElement('td');
+            if (!data) return td;
+            if (data.isH) {
+                td.className = "cat-label";
+                td.style.textAlign = "center";
+                td.innerText = "--";
+            } else {
+                const deleteBtn = data.c === "Uncategorized" 
+                    ? `<span class="del-btn" onclick="deleteUncategorizedItem('${data.c}', '${data.t}')">✕</span>`
+                    : `<span class="del-btn" onclick="deleteItem('${data.c}', '${data.t}')">✕</span>`;
+                
+                td.innerHTML = `<span contenteditable="true">${data.q}</span> <span class="unit-tag">${data.u}</span> ${deleteBtn}`;
+            }
+            return td;
+        }
+
+        function addNewCategory() {
+            const name = document.getElementById('newCatName').value.trim();
+            const side = document.getElementById('newCatSide').value;
+            if (!name) return alert("Enter Name");
+            categories.push({ name: name, side: side, items: [] });
+            document.getElementById('newCatName').value = "";
+            renderTable();
+        }
+
+        function deleteCategory(name) {
+            // Move items from deleted category to uncategorized
+            const category = categories.find(c => c.name === name);
+            if (category && category.items.length > 0) {
+                if (category.side === 'L') {
+                    uncategorizedItems.L.push(...category.items);
+                } else {
+                    uncategorizedItems.R.push(...category.items);
+                }
+            }
+            
+            categories = categories.filter(c => c.name !== name);
+            renderTable();
+        }
+
+        function updateCategoryDropdown() {
+            const sel = document.getElementById('targetCat');
+            const val = sel.value;
+            sel.innerHTML = '<option value="">-- No Heading --</option>';
+            categories.forEach(c => {
+                const opt = document.createElement('option');
+                opt.value = c.name; opt.textContent = c.name;
+                sel.appendChild(opt);
+            });
+            sel.value = val;
+        }
+
+        function addItemFromUI() {
+            const catName = document.getElementById('targetCat').value;
+            const name = document.getElementById('itemName').value.trim();
+            const qty = document.getElementById('itemQty').value;
+            const unit = document.getElementById('unitType').value;
+            
+            // Default side if no category selected
+            let side = "L"; // Default to left side
+
+            if (!name) return alert("Enter Item Name");
+
+            // If no category is selected, add to uncategorized
+            if (!catName) {
+                // Determine which side to add to (default L)
+                side = document.querySelector('#newCatSide').value;
+                
+                if (side === 'L') {
+                    // Check if item already exists in uncategorized left
+                    const existingItem = uncategorizedItems.L.find(i => i.n === name);
+                    if (existingItem) {
+                        existingItem.q = qty;
+                        existingItem.u = unit;
+                    } else {
+                        uncategorizedItems.L.push({ n: name, q: qty, u: unit });
+                    }
+                } else {
+                    // Right side
+                    const existingItem = uncategorizedItems.R.find(i => i.n === name);
+                    if (existingItem) {
+                        existingItem.q = qty;
+                        existingItem.u = unit;
+                    } else {
+                        uncategorizedItems.R.push({ n: name, q: qty, u: unit });
+                    }
+                }
+                
+                // Clear inputs
+                document.getElementById('itemName').value = "";
+                document.getElementById('itemQty').value = "";
+                renderTable();
+                return;
+            }
+
+            // If category is selected, add to that category
+            const cat = categories.find(c => c.name === catName);
+            if (!cat) return alert("Selected category not found");
+
+            const item = cat.items.find(i => i.n === name);
+            
+            if (item) {
+                item.q = qty; item.u = unit;
+            } else {
+                cat.items.push({ n: name, q: qty, u: unit });
+            }
+            
+            document.getElementById('itemName').value = "";
+            document.getElementById('itemQty').value = "";
+            renderTable();
+        }
+
+        function deleteItem(cName, iName) {
+            const cat = categories.find(c => c.name === cName);
+            if (cat) {
+                cat.items = cat.items.filter(i => i.n !== iName);
+                renderTable();
+            }
+        }
+
+        function deleteUncategorizedItem(cName, iName) {
+            if (cName === "Uncategorized") {
+                // Find and remove from either left or right uncategorized
+                uncategorizedItems.L = uncategorizedItems.L.filter(i => i.n !== iName);
+                uncategorizedItems.R = uncategorizedItems.R.filter(i => i.n !== iName);
+                renderTable();
+            }
+        }
+
+        function toggleMenu() { 
+            document.getElementById('sidebar').classList.toggle('open'); 
+        }
+        
+        function autoScale() {
+            const factor = Math.min(1, (document.querySelector('.main-content').clientWidth - 40) / 850);
+            document.getElementById('tableScaler').style.transform = `scale(${factor})`;
+        }
+
+        function previewImg(e, id) {
+            const reader = new FileReader();
+            reader.onload = () => document.getElementById(id).innerHTML = `<img src="${reader.result}">`;
+            reader.readAsDataURL(e.target.files[0]);
+        }
+
+        function exportPng() {
+            const scaler = document.getElementById('tableScaler');
+            const oldTransform = scaler.style.transform;
+            scaler.style.transform = "scale(1)";
+            
+            // Hide delete buttons for capture
+            const btns = document.querySelectorAll('.del-btn, .del-cat-btn');
+            btns.forEach(b => b.style.display = 'none');
+
+            html2canvas(document.getElementById('captureArea'), { 
+                scale: 2,
+                backgroundColor: '#ffffff'
+            }).then(canvas => {
+                const link = document.createElement('a');
+                link.download = 'KitchenInventory.png';
+                link.href = canvas.toDataURL();
+                link.click();
+                
+                scaler.style.transform = oldTransform;
+                btns.forEach(b => b.style.display = '');
+            });
+        }
+
+        // Initialize the app
+        window.onload = () => {
+            setInputLang('en');
+            renderTable();
+        };
+        window.onresize = autoScale;
+    </script>
+</body>
+</html>
