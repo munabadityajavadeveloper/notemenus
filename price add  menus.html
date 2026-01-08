@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Note Menus -Inventory Menu</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800&family=Noto+Sans+Oriya:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        :root {
+            --sidebar-width: 320px;
+            --primary: #2563eb;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --dark: #0f172a;
+            --bg: #334155;
+            --odia-color: #7c3aed;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body { 
+            font-family: 'Inter', 'Noto Sans Oriya', sans-serif; 
+            background-color: var(--bg); 
+            display: flex; 
+            height: 100vh; 
+            width: 100vw; 
+            overflow: hidden; 
+        }
+
+        /* Mobile Menu Button */
+        #menuBtn {
+            display: none;
+            position: fixed;
+            top: 15px;
+            left: 15px;
+            z-index: 2001;
+            padding: 10px 16px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            cursor: pointer;
+        }
+
+        /* Sidebar Overlay for Mobile */
+        #overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.6);
+            z-index: 1999;
+        }
+
+        /* Sidebar Styling */
+        #sidebar { 
+            width: var(--sidebar-width); 
+            background: var(--dark); 
+            color: white; 
+            height: 100%; 
+            display: flex; 
+            flex-direction: column; 
+            flex-shrink: 0; 
+            z-index: 2000; 
+            transition: transform 0.3s ease; 
+            border-right: 1px solid #334155; 
+            overflow-y: auto; 
+        }
+
+        .sidebar-header { padding: 20px; background: #1e293b; text-align: center; font-weight: 800; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        #controls { padding: 15px; }
+        
+        .card { background: rgba(255,255,255,0.05); padding: 12px; border-radius: 8px; margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.1); }
+        
+        /* Language Toggle */
+        .lang-toggle-box { display: flex; background: #000; border-radius: 6px; margin-bottom: 10px; padding: 2px; }
+        .lang-btn { flex: 1; padding: 8px; border: none; background: transparent; color: #94a3b8; cursor: pointer; font-size: 12px; font-weight: bold; border-radius: 4px; }
+        .lang-btn.active { background: var(--primary); color: white; }
+        .lang-btn.active.or { background: var(--odia-color); }
+
+        h4 { font-size: 11px; color: #94a3b8; text-transform: uppercase; margin-bottom: 8px; letter-spacing: 1px; }
+        input, select { width: 100%; padding: 12px; margin-bottom: 10px; background: #0f172a; border: 1px solid #334155; color: white; border-radius: 6px; font-size: 14px; outline: none; }
+        
+        .btn { width: 100%; padding: 12px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; margin-bottom: 5px; color: white; font-size: 14px; transition: opacity 0.2s; }
+        .btn:active { opacity: 0.8; }
+
+        /* Main Content & Table Scaling */
+        .main-content { 
+            flex: 1; 
+            position: relative; 
+            overflow: auto; 
+            display: flex; 
+            flex-direction: column;
+            align-items: center; 
+            padding: 20px; 
+        }
+
+        #tableScaler { 
+            transform-origin: top center; 
+            transition: transform 0.2s; 
+        }
+
+        #captureArea { 
+            background: white; 
+            padding: 30px; 
+            width: 850px; /* High quality width for PNG export */
+            min-height: 1100px; 
+            box-shadow: 0 0 40px rgba(0,0,0,0.2); 
+        }
+
+        /* Table Styles */
+        table { width: 100%; border-collapse: collapse; border: 2.5px solid #000; table-layout: fixed; }
+        th, td { border: 1px solid #000; padding: 6px; vertical-align: middle; position: relative; height: 35px; font-size: 13px; word-wrap: break-word; color: #000; }
+        
+        .red-header { color: #b91c1c; font-size: 32px; font-weight: 800; text-align: center; line-height: 1.2; }
+        .black-bar { background: #0b5394; color: #fff; text-align: center; font-size: 11px; font-weight: 800; }
+        
+        .cat-label { background: #cbd5e1; font-weight: 800; font-size: 12px; color: #000; }
+        .del-btn { color: var(--danger); cursor: pointer; position: absolute; right: 2px; visibility: hidden; background: #fff; padding: 2px 5px; font-size: 10px; border: 1px solid #ddd; z-index: 10; border-radius: 3px; }
+        td:hover .del-btn { visibility: visible; }
+
+        .img-slot { width: 100px; height: 100px; border: 1px dashed #ccc; margin: auto; display: flex; align-items: center; justify-content: center; overflow: hidden; background: #f8fafc; font-size: 10px; color: #94a3b8; }
+        .img-slot img { width: 100%; height: 100%; object-fit: cover; }
+        .unit-tag { font-size: 10px; color: #64748b; font-weight: bold; margin-left: 3px; }
+        .total-val { font-weight: bold; color: #000; }
+
+        .button-3 {
+            background-color: #2ea44f; border: 1px solid rgba(27, 31, 35, .15);
+            border-radius: 6px; color: #fff; cursor: pointer; padding: 4px 10px; font-size: 10px; font-weight: 600;
+        }
+
+        /* Responsive Breakpoints */
+        @media (max-width: 1024px) {
+            #sidebar { position: fixed; left: 0; transform: translateX(-100%); }
+            #sidebar.open { transform: translateX(0); }
+            #menuBtn { display: block; }
+            #sidebar.open + #overlay { display: block; }
+            .main-content { padding-top: 80px; }
+        }
+
+        @media (max-width: 600px) {
+            #captureArea { padding: 15px; }
+            .red-header { font-size: 24px; }
+        }
+    </style>
+</head>
+<body>
+
+    <button id="menuBtn" onclick="toggleMenu()">☰ Edit Menu</button>
+    <div id="overlay" onclick="toggleMenu()"></div>
+
+    <div id="sidebar">
+        <div class="sidebar-header">NOTE MENUS</div>
+        <div id="controls">
+
+            <div class="card" style="border: 1px solid var(--odia-color);">
+                <h4>1. Language / ଭାଷା</h4>
+                <div class="lang-toggle-box">
+                    <button class="lang-btn active" id="btn-in-en" onclick="setInputLang('en')">English</button>
+                    <button class="lang-btn or" id="btn-in-or" onclick="setInputLang('or')">ଓଡ଼ିଆ</button>
+                </div>
+            </div>
+
+            <div class="card" style="border: 1px solid var(--warning);">
+                <h4 id="label-cat-name">Heading Name</h4>
+                <input type="text" id="newCatName" placeholder="e.g. Masala">
+                <select id="newCatSide">
+                    <option value="L">Left Column</option>
+                    <option value="R">Right Column</option>
+                </select>
+                <button class="btn" style="background: var(--warning); color: #000;" onclick="addNewCategory()" id="btn-add-cat">Create Heading</button>
+            </div>
+            
+            <div class="card" style="border: 1px solid var(--primary);">
+                <h4 id="label-target-cat">Select Heading</h4>
+                <select id="targetCat"><option value="">-- No Heading --</option></select>
+                <h4 id="label-item-select">Item Name</h4>
+                <input type="text" id="itemName" placeholder="Enter item" list="itemSuggestions">
+                <datalist id="itemSuggestions"></datalist>
+            </div>
+
+            <div class="card" style="border: 1px solid var(--success);">
+                <h4 id="label-qty">Quantity & Price</h4>
+                <div style="display: flex; gap: 5px; margin-bottom: 10px;">
+                    <input type="number" id="itemQty" placeholder="Qty" style="flex: 1; margin-bottom:0;">
+                    <select id="unitType" style="flex: 1; margin-bottom:0;">
+                        <option value="Kg">Kg</option><option value="G.m">G.m</option>
+                        <option value="Pkt">Pkt</option><option value="Ltr">Ltr</option>
+                        <option value="Pic">Pic.</option>
+                    </select>
+                </div>
+                <h4 id="label-price">Price Per Unit (₹)</h4>
+                <input type="number" id="itemPrice" placeholder="0.00" oninput="calcPreview()">
+                <div id="calcPreview" style="font-size: 12px; color: var(--success); margin-bottom: 10px; font-weight: bold;">Total: ₹0.00</div>
+                <button class="btn" style="background: var(--success);" onclick="addItemFromUI()" id="btn-update">Add to Table</button>
+            </div>
+
+            <div class="card">
+                <button class="btn" style="background: #6366f1;" onclick="exportPng()">💾 Save as PNG Image</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div id="tableScaler">
+            <div id="captureArea">
+                <table>
+                    <thead>
+                        <tr>
+                            <td style="width:18%; text-align:center;">
+                                <div class="img-slot" id="logoSlot">LOGO</div>
+                                <input type="file" id="logoInp" hidden onchange="previewImg(event, 'logoSlot')">
+                                <button onclick="document.getElementById('logoInp').click()" style="margin-top:5px;" class="button-3">UPLOAD</button>
+                            </td>
+                            <th colspan="4">
+                                <div class="red-header" id="mainHeader" contenteditable="true">BUSINESS NAME</div>
+                                <p id="headerAddress" contenteditable="true" style="text-align:center;">Street Name, City, State</p>
+                                <p id="headerPhone" contenteditable="true" style="text-align:center;">📞 99XXXXXXXX | 96XXXXXXXX</p>
+                                <h2 style="margin-top:8px; text-align:center;"><u id="menuTitle" contenteditable="true">Daily Inventory & Price List</u></h2>
+                            </th>
+                            <td style="width:18%; text-align:center;">
+                                <div class="img-slot" id="itemSlot">PHOTO</div>
+                                <input type="file" id="itemInp" hidden onchange="previewImg(event, 'itemSlot')">
+                                <button onclick="document.getElementById('itemInp').click()" style="margin-top:5px;" class="button-3">UPLOAD</button>
+                            </td>
+                        </tr>
+                        <tr class="black-bar">
+                            <td style="width:23%" class="col-name-label">Item Name</td>
+                            <td style="width:13%" class="col-qty-label">Qty</td>
+                            <td style="width:14%" class="col-prc-label">Price</td>
+                            <td style="width:23%" class="col-name-label">Item Name</td>
+                            <td style="width:13%" class="col-qty-label">Qty</td>
+                            <td style="width:14%" class="col-prc-label">Price</td>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody"></tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="6" style="text-align:center; font-size:11px; color:#64748b; padding:15px 0; border:none;">
+                                <strong>Generated by www.notemenus.in</strong>
+                            </td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let categories = [
+            { name: "Masala / ମସଲା", side: "L", items: [] },
+            { name: "Vegetables / ପନିପରିବା", side: "R", items: [] }
+        ];
+        let uncategorizedItems = { L: [], R: [] };
+
+        const translations = {
+            en: {
+                catName: "Heading Name", addBtn: "Create Heading", selCat: "Select Heading",
+                selItem: "Item Name", qty: "Quantity", price: "Price Per Unit (₹)", updateBtn: "Add to Table",
+                colName: "Item Name", colQty: "Qty", colPrc: "Price (₹)",
+                items: ["Chicken", "Paneer", "Oil", "Potato", "Onion", "Salt", "Sugar", "Spices"]
+            },
+            or: {
+                catName: "ଶିରୋନାମା ନାମ", addBtn: "ହେଡିଂ ପ୍ରସ୍ତୁତ କରନ୍ତୁ", selCat: "ହେଡିଂ ବାଛନ୍ତୁ",
+                selItem: "ସାମଗ୍ରୀ ନାମ", qty: "ପରିମାଣ", price: "ଦର (ଟଙ୍କା)", updateBtn: "ଟେବୁଲ୍‌ରେ ଯୋଡନ୍ତୁ",
+                colName: "ସାମଗ୍ରୀ ନାମ", colQty: "ପରିମାଣ", colPrc: "ମୂଲ୍ୟ",
+                items: ["କୁକୁଡ଼ା ମାଂସ", "ପନିର", "ତେଲ", "ଆଳୁ", "ପିଆଜ", "ଲୁଣ", "ଚିନି", "ମସଲା"]
+            }
+        };
+
+        function toggleMenu() {
+            document.getElementById('sidebar').classList.toggle('open');
+        }
+
+        function setInputLang(lang) {
+            const t = translations[lang];
+            document.getElementById('label-cat-name').innerText = t.catName;
+            document.getElementById('btn-add-cat').innerText = t.addBtn;
+            document.getElementById('label-target-cat').innerText = t.selCat;
+            document.getElementById('label-item-select').innerText = t.selItem;
+            document.getElementById('label-qty').innerText = t.qty;
+            document.getElementById('label-price').innerText = t.price;
+            document.getElementById('btn-update').innerText = t.updateBtn;
+            
+            document.querySelectorAll('.col-name-label').forEach(el => el.innerText = t.colName);
+            document.querySelectorAll('.col-qty-label').forEach(el => el.innerText = t.colQty);
+            document.querySelectorAll('.col-prc-label').forEach(el => el.innerText = t.colPrc);
+
+            document.getElementById('btn-in-en').classList.toggle('active', lang === 'en');
+            document.getElementById('btn-in-or').classList.toggle('active', lang === 'or');
+
+            const datalist = document.getElementById('itemSuggestions');
+            datalist.innerHTML = '';
+            t.items.forEach(i => {
+                const opt = document.createElement('option');
+                opt.value = i; datalist.appendChild(opt);
+            });
+        }
+
+        function autoScale() {
+            const mainContent = document.querySelector('.main-content');
+            const scaler = document.getElementById('tableScaler');
+            const availableWidth = mainContent.clientWidth - 40;
+            const tableWidth = 850;
+            
+            let scale = availableWidth / tableWidth;
+            if (scale > 1) scale = 1; 
+            
+            scaler.style.transform = `scale(${scale})`;
+            // Adjust parent height to prevent overlap
+            mainContent.style.minHeight = (1200 * scale) + "px";
+        }
+
+        function calcPreview() {
+            const q = parseFloat(document.getElementById('itemQty').value) || 0;
+            const p = parseFloat(document.getElementById('itemPrice').value) || 0;
+            document.getElementById('calcPreview').innerText = `Total: ₹${(q * p).toFixed(2)}`;
+        }
+
+        function renderTable() {
+            const tbody = document.getElementById('tableBody');
+            tbody.innerHTML = "";
+            let LRows = [], RRows = [];
+
+            const processList = (list, sideArr, sideCode) => {
+                list.filter(c => c.side === sideCode).forEach(cat => {
+                    sideArr.push({ isH: true, t: cat.name });
+                    cat.items.forEach(i => sideArr.push({ isH: false, ...i, c: cat.name }));
+                });
+            };
+
+            processList(categories, LRows, 'L');
+            if (uncategorizedItems.L.length > 0) {
+                LRows.push({ isH: true, t: "Items" });
+                uncategorizedItems.L.forEach(i => LRows.push({ isH: false, ...i, c: "Uncategorized" }));
+            }
+
+            processList(categories, RRows, 'R');
+            if (uncategorizedItems.R.length > 0) {
+                RRows.push({ isH: true, t: "Items" });
+                uncategorizedItems.R.forEach(i => RRows.push({ isH: false, ...i, c: "Uncategorized" }));
+            }
+
+            const max = Math.max(LRows.length, RRows.length, 15);
+            for (let i = 0; i < max; i++) {
+                const tr = document.createElement('tr');
+                tr.appendChild(createCell(LRows[i], 'name', 'L'));
+                tr.appendChild(createCell(LRows[i], 'qty', 'L'));
+                tr.appendChild(createCell(LRows[i], 'price', 'L'));
+                tr.appendChild(createCell(RRows[i], 'name', 'R'));
+                tr.appendChild(createCell(RRows[i], 'qty', 'R'));
+                tr.appendChild(createCell(RRows[i], 'price', 'R'));
+                tbody.appendChild(tr);
+            }
+            updateCategoryDropdown();
+            autoScale();
+        }
+
+        function createCell(data, type, side) {
+            const td = document.createElement('td');
+            if (!data) return td;
+
+            if (data.isH) {
+                td.className = "cat-label";
+                if (type === 'name') td.innerHTML = `📦 ${data.t.toUpperCase()}`;
+                else td.innerText = "-";
+                return td;
+            }
+
+            if (type === 'name') {
+                td.innerHTML = `<span contenteditable="true">${data.n}</span>`;
+            } else if (type === 'qty') {
+                td.innerHTML = `<span contenteditable="true">${data.q}</span><span class="unit-tag">${data.u}</span>`;
+            } else {
+                const total = (data.q * data.p).toFixed(2);
+                const delFunc = data.c === "Uncategorized" ? `deleteUncategorizedItem('${data.n}', '${side}')` : `deleteItem('${data.c}', '${data.n}')`;
+                td.innerHTML = `<span class="total-val">${total}</span> <span class="del-btn" onclick="${delFunc}">✕</span>`;
+            }
+            return td;
+        }
+
+        function addItemFromUI() {
+            const catName = document.getElementById('targetCat').value;
+            const name = document.getElementById('itemName').value.trim();
+            const qty = parseFloat(document.getElementById('itemQty').value) || 0;
+            const price = parseFloat(document.getElementById('itemPrice').value) || 0;
+            const unit = document.getElementById('unitType').value;
+            
+            if (!name) return alert("Please enter item name");
+
+            const newItem = { n: name, q: qty, p: price, u: unit };
+
+            if (!catName) {
+                const side = document.getElementById('newCatSide').value;
+                uncategorizedItems[side].push(newItem);
+            } else {
+                const cat = categories.find(c => c.name === catName);
+                cat.items.push(newItem);
+            }
+            
+            document.getElementById('itemName').value = "";
+            document.getElementById('itemQty').value = "";
+            document.getElementById('itemPrice').value = "";
+            
+            renderTable();
+            if(window.innerWidth <= 1024) toggleMenu(); // Auto close on mobile
+        }
+
+        function deleteItem(cName, iName) {
+            const cat = categories.find(c => c.name === cName);
+            if (cat) cat.items = cat.items.filter(i => i.n !== iName);
+            renderTable();
+        }
+
+        function deleteUncategorizedItem(iName, side) {
+            uncategorizedItems[side] = uncategorizedItems[side].filter(i => i.n !== iName);
+            renderTable();
+        }
+
+        function addNewCategory() {
+            const name = document.getElementById('newCatName').value.trim();
+            const side = document.getElementById('newCatSide').value;
+            if (name) categories.push({ name: name, side: side, items: [] });
+            document.getElementById('newCatName').value = "";
+            renderTable();
+        }
+
+        function updateCategoryDropdown() {
+            const sel = document.getElementById('targetCat');
+            const current = sel.value;
+            sel.innerHTML = '<option value="">-- No Heading --</option>';
+            categories.forEach(c => {
+                const opt = document.createElement('option');
+                opt.value = c.name; opt.textContent = c.name;
+                sel.appendChild(opt);
+            });
+            sel.value = current;
+        }
+
+        function previewImg(e, id) {
+            const reader = new FileReader();
+            reader.onload = () => document.getElementById(id).innerHTML = `<img src="${reader.result}">`;
+            reader.readAsDataURL(e.target.files[0]);
+        }
+
+        function exportPng() {
+            const scaler = document.getElementById('tableScaler');
+            const originalTransform = scaler.style.transform;
+            scaler.style.transform = "scale(1)"; // Reset scale for high-quality capture
+            
+            html2canvas(document.getElementById('captureArea'), { 
+                scale: 2,
+                useCORS: true,
+                logging: false
+            }).then(canvas => {
+                const link = document.createElement('a');
+                link.download = 'Inventory_Price_List.png';
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+                scaler.style.transform = originalTransform; // Restore scale
+            });
+        }
+
+        window.onload = () => { 
+            setInputLang('en'); 
+            renderTable(); 
+        };
+        window.onresize = autoScale;
+    </script>
+</body>
+</html>
