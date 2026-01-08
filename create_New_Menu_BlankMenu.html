@@ -289,7 +289,7 @@
             </div>
 
             <div class="card">
-                <button class="btn" style="background: #6366f1;" onclick="exportPng()">💾 Save as PNG Image</button>
+                <button class="btn" style="background: #6366f1;" onclick="exportPng()">💾 Save table</button>
             </div>
         </div>
     </div>
@@ -622,7 +622,7 @@
                 backgroundColor: '#ffffff'
             }).then(canvas => {
                 const link = document.createElement('a');
-                link.download = 'KitchenInventory.png';
+                link.download = 'www.notemenus.in.png';
                 link.href = canvas.toDataURL();
                 link.click();
                 

@@ -199,7 +199,7 @@
             </div>
 
             <div class="card">
-                <button class="btn" style="background: #6366f1;" onclick="exportPng()">💾 Save as PNG Image</button>
+                <button class="btn" style="background: #6366f1;" onclick="exportPng()">💾 Save Table</button>
             </div>
         </div>
     </div>
@@ -457,7 +457,7 @@
                 logging: false
             }).then(canvas => {
                 const link = document.createElement('a');
-                link.download = 'Inventory_Price_List.png';
+                link.download = 'www.notemenus.in.png';
                 link.href = canvas.toDataURL('image/png');
                 link.click();
                 scaler.style.transform = originalTransform; // Restore scale
